@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".ui.main.pages.addEditNote.AddEditNoteFragment">
+
+    <!--guide line top-->
+    <androidx.constraintlayout.widget.Guideline
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="horizontal"
+        app:layout_constraintGuide_begin="@dimen/_15mdp"
+        android:id="@+id/guideTop"/>
+    <!--guide line start-->
+    <androidx.constraintlayout.widget.Guideline
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="@dimen/_10mdp"
+        android:id="@+id/guideEnd"/>
+    <!--guide line end-->
+    <androidx.constraintlayout.widget.Guideline
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="@dimen/_10mdp"
+        android:id="@+id/guideStart"/>
+
+    <!--Delete Note-->
+    <TextView
+        android:visibility="invisible"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="@id/guideStart"
+        app:layout_constraintTop_toTopOf="@id/guideTop"
+        android:text="@string/note_delete"
+        android:textColor="@color/red_900"
+        android:textSize="@dimen/_17font_mdp"
+        android:textStyle="bold"
+        android:id="@+id/delete_note_txt"/>
+    <!--save note-->
+    <com.google.android.material.button.MaterialButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="@id/delete_note_txt"
+        app:layout_constraintStart_toEndOf="@id/delete_note_txt"
+        app:layout_constraintEnd_toStartOf="@id/close_fragment"
+        app:layout_constraintBottom_toBottomOf="@id/delete_note_txt"
+        android:text="@string/save_note"
+        android:textStyle="bold"
+        android:textColor="@color/white"
+        app:strokeColor="@color/teal_200"
+        app:backgroundTint="@color/teal_700"
+        app:strokeWidth="@dimen/_3mdp"
+        android:id="@+id/save_note_btn"
+        android:textSize="@dimen/_12font_mdp"
+        app:cornerRadius="@dimen/_10mdp"/>
+    <!--close fragment-->
+    <ImageView
+        android:layout_width="@dimen/_23mdp"
+        android:layout_height="0dp"
+        android:src="@drawable/ic_baseline_add_24"
+        android:rotation="45"
+        app:layout_constraintTop_toTopOf="@id/guideTop"
+        app:layout_constraintEnd_toEndOf="@id/guideEnd"
+        app:layout_constraintBottom_toBottomOf="@id/delete_note_txt"
+        app:tint="@color/black"
+        android:id="@+id/close_fragment"/>
+    <!--pin check box-->
+    <CheckBox
+        android:layout_marginTop="@dimen/_10mdp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:drawableEndCompat="@drawable/ic_twotone_push_pin_24"
+        app:layout_constraintTop_toBottomOf="@id/close_fragment"
+        android:textColor="@color/teal_700"
+        android:id="@+id/pin_checkbox"
+        app:layout_constraintEnd_toEndOf="@id/guideEnd"
+        android:text="@string/pinning_note_add_edit_fragment"/>
+    <!--title editText-->
+    <EditText
+        android:layout_marginTop="@dimen/_5mdp"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="@id/guideStart"
+        app:layout_constraintEnd_toEndOf="@id/guideEnd"
+        app:layout_constraintTop_toBottomOf="@id/pin_checkbox"
+        android:hint="@string/title_note"
+        android:maxLength="35"
+        android:textStyle="bold"
+        android:background="@drawable/item_title_note_bg"
+        android:maxLines="1"
+        android:padding="@dimen/_6mdp"
+        android:textColor="@color/blueGray_900"
+        android:textColorHint="@color/blueGray_900"
+        android:textSize="@dimen/_18font_mdp"
+        android:inputType="textEmailSubject"
+        android:id="@+id/title_note_edtTxt"/>
+    <!--des editText-->
+    <EditText
+        android:layout_marginTop="@dimen/_6mdp"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/_205mdp"
+        app:layout_constraintStart_toStartOf="@id/guideStart"
+        app:layout_constraintEnd_toEndOf="@id/guideEnd"
+        app:layout_constraintTop_toBottomOf="@id/title_note_edtTxt"
+        android:hint="@string/des_note"
+        android:textStyle="bold"
+        android:background="@drawable/item_des_note_bg"
+        android:padding="@dimen/_6mdp"
+        android:textColor="@color/brown_50"
+        android:textColorHint="@color/brown_50"
+        android:gravity="top"
+        android:scrollbars="vertical"
+        android:inputType="textMultiLine"
+        android:id="@+id/des_note_edtTxt"
+        android:textSize="@dimen/_15font_mdp" />
+    <!--Title Of Folders-->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:drawableEndCompat="@drawable/ic_twotone_folder_24"
+        app:layout_constraintTop_toBottomOf="@id/des_note_edtTxt"
+        app:layout_constraintEnd_toEndOf="@id/guideEnd"
+        android:layout_marginTop="@dimen/_12mdp"
+        android:text="@string/grouping"
+        android:gravity="center"
+        android:drawablePadding="@dimen/_3mdp"
+        android:textStyle="bold"
+        android:id="@+id/title_folder_lay"
+        android:textSize="@dimen/_14font_mdp"
+        android:textColor="@color/teal_700"
+        app:drawableTint="@color/teal_700" />
+    <!--Folder Data insert Lay-->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="0dp"
+        android:id="@+id/folder_data_insert_lay"
+        android:layout_marginTop="@dimen/_5mdp"
+        android:padding="@dimen/_5mdp"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="@id/guideStart"
+        app:layout_constraintEnd_toEndOf="@id/guideEnd"
+        android:background="@drawable/folder_data_insert_lay_bg"
+        app:layout_constraintTop_toBottomOf="@id/title_folder_lay">
+
+        <!--priority spinner-->
+        <Spinner
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/_40mdp"
+            android:background="#00FFFFFF"
+            android:gravity="center"
+            android:id="@+id/priority_selection_spinner"
+            android:overlapAnchor="false"
+            android:dropDownVerticalOffset="-1dp"
+            android:layout_margin="@dimen/_5mdp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/folder_selection_spinner"/>
+
+        <!--folder spinner-->
+        <Spinner
+            android:background="#00FFFFFF"
+            android:id="@+id/folder_selection_spinner"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/_40mdp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toEndOf="@id/priority_selection_spinner"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

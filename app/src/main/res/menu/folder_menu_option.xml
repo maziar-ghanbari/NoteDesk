@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:title="@string/edit_folder"
+        android:id="@+id/edit_folder"/>
+
+    <item android:title="@string/delete_folder"
+        android:id="@+id/delete_folder"/>
+
+</menu>

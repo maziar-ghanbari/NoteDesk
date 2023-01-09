@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:padding="@dimen/_15mdp"
+    android:layout_margin="@dimen/_5mdp"
+    tools:context=".ui.main.pages.addEditFolder.AddEditFolderFragment">
+
+    <!--close-->
+    <ImageView
+        android:layout_width="@dimen/_30mdp"
+        android:layout_height="@dimen/_30mdp"
+        android:padding="@dimen/_5mdp"
+        android:src="@drawable/ic_baseline_add_24"
+        android:rotation="45"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:id="@+id/close_img"
+        />
+    <!--folder title txt-->
+    <EditText
+        android:maxLength="8"
+        android:layout_marginTop="@dimen/_10mdp"
+        android:layout_marginEnd="@dimen/_5mdp"
+        android:layout_marginStart="@dimen/_5mdp"
+        android:inputType="textEmailSubject"
+        android:hint="@string/name_new_folder_add"
+        android:layout_width="@dimen/_200mdp"
+        android:layout_height="wrap_content"
+        android:id="@+id/folder_title_edt"
+        app:layout_constraintTop_toBottomOf="@id/close_img"
+        app:layout_constraintEnd_toStartOf="@id/folder_icon_spinner"
+        app:layout_constraintStart_toStartOf="parent">
+        <requestFocus />
+    </EditText>
+    <!--folder icon spinner-->
+    <Spinner
+        android:id="@+id/folder_icon_spinner"
+        android:layout_width="@dimen/_50mdp"
+        android:layout_height="@dimen/_50mdp"
+        android:background="#00FFFFFF"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="@id/folder_title_edt"
+        app:layout_constraintBottom_toBottomOf="@id/folder_title_edt"/>
+    <!--save-->
+    <Button
+        android:id="@+id/add_folder_new_btn"
+        android:text="@string/saveNewFolder"
+        android:layout_marginTop="@dimen/_15mdp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@id/folder_title_edt"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

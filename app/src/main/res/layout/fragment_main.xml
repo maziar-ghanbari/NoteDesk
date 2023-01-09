@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".ui.main.MainFragment"
+    android:background="@color/brown_50">
+
+
+    <!--recycler slide menu-->
+    <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            app:layout_constraintBottom_toTopOf="@+id/bottom_menu_lay"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_margin="@dimen/_10mdp"
+            android:background="@drawable/folder_recycler_bg"
+            android:paddingStart="@dimen/_3mdp"
+            android:paddingEnd="@dimen/_3mdp"
+            android:paddingTop="@dimen/_10mdp"
+            android:clipToPadding="false"
+            android:paddingBottom="@dimen/_10mdp"
+            android:id="@+id/slide_menu_recycler" />
+
+    <!--Bottom Menu lay-->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="0dp"
+        android:id="@+id/bottom_menu_lay"
+        android:layout_height="@dimen/_50mdp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_margin="@dimen/_10mdp"
+        android:background="@drawable/navigation_bottom_background"
+        android:elevation="@dimen/_3mdp"
+        android:paddingStart="@dimen/_8mdp"
+        android:paddingEnd="@dimen/_8mdp"
+        android:paddingBottom="@dimen/_1mdp">
+
+
+        <TextView
+            android:paddingTop="@dimen/_6mdp"
+            android:id="@+id/add_menu_txt"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:text="@string/add_menu"
+            app:drawableTopCompat="@drawable/ic_baseline_add_24"
+            app:layout_constraintDimensionRatio="1:1"
+            android:gravity="center"
+            app:drawableTint="@color/white"
+            android:textColor="@color/white"
+            android:layout_margin="@dimen/_5mdp"/>
+
+        <TextView
+            android:paddingTop="@dimen/_6mdp"
+            android:id="@+id/search_menu_txt"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:text="@string/search_menu"
+            app:drawableTopCompat="@drawable/ic_baseline_search_24"
+            app:layout_constraintDimensionRatio="1:1"
+            android:gravity="center"
+            app:drawableTint="@color/white"
+            android:textColor="@color/white"
+            android:layout_margin="@dimen/_5mdp"/>
+
+        <TextView
+            android:paddingTop="@dimen/_6mdp"
+            android:id="@+id/slide_menu_visible_txt"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:text="@string/ioSlide_menu"
+            app:drawableTopCompat="@drawable/ic_twotone_door_sliding_24"
+            app:layout_constraintDimensionRatio="1:1"
+            android:gravity="center"
+            app:drawableTint="@color/white"
+            android:textColor="@color/white"
+            android:layout_margin="@dimen/_5mdp"/>
+
+        <!--selecting the priority-->
+        <Spinner
+            android:paddingTop="@dimen/_5mdp"
+            android:paddingBottom="@dimen/_5mdp"
+            android:id="@+id/priorities_menu_spinner"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:text="@string/priorities_menu"
+            android:background="#00FFFFFF"
+            app:layout_constraintDimensionRatio="1:1"
+            android:gravity="center"
+            android:overlapAnchor="false"
+            android:dropDownVerticalOffset="-1dp"
+            android:layout_margin="@dimen/_5mdp"/>
+
+        <androidx.constraintlayout.helper.widget.Flow
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/flow_menu_item"
+            app:flow_wrapMode="aligned"
+            app:flow_horizontalGap="@dimen/_3mdp"
+            app:constraint_referenced_ids="priorities_menu_spinner,slide_menu_visible_txt,add_menu_txt,search_menu_txt"/>
+    </androidx.constraintlayout.widget.ConstraintLayout>
+    <!--search box-->
+    <EditText
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/slide_menu_recycler"
+        android:background="@drawable/search_box_bg"
+        android:id="@+id/search_box_edtTxt"
+        app:layout_constraintTop_toTopOf="parent"
+        android:padding="@dimen/_5mdp"
+        android:layout_marginEnd="@dimen/_5mdp"
+        android:layout_marginStart="@dimen/_5mdp"
+        android:layout_marginTop="@dimen/_10mdp"
+        android:layout_marginBottom="@dimen/_5mdp"
+        android:drawableEnd="@drawable/ic_baseline_search_24"
+        android:hint="@string/search_menu"
+        android:drawablePadding="@dimen/_3mdp"
+        android:elevation="@dimen/_2mdp"
+        android:inputType="textEmailSubject">
+        <!--<requestFocus/>-->
+    </EditText>
+    <!--notes list recycler-->
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+
+        android:padding="@dimen/_3mdp"
+        android:clipToPadding="false"
+        android:id="@+id/notes_list_recycler"
+        app:layout_constraintTop_toBottomOf="@id/search_box_edtTxt"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/slide_menu_recycler"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <!--notes list progress-->
+    <ProgressBar
+        android:id="@+id/notes_list_progress"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/slide_menu_recycler"
+        app:layout_constraintBottom_toBottomOf="parent"/>
+
+    <!--notes list empty-->
+    <ImageView
+        android:visibility="gone"
+        android:id="@+id/notes_list_empty"
+        android:layout_width="@dimen/_60mdp"
+        android:layout_height="@dimen/_60mdp"
+        android:src="@drawable/empty_icon"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toStartOf="@id/slide_menu_recycler"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:tint="@color/teal_700" />
+</androidx.constraintlayout.widget.ConstraintLayout>

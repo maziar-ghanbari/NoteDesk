@@ -1,0 +1,23 @@
+<resources>
+    <string name="app_name">NoteDesk</string>
+
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="app_name_persian">میز یادداشت</string>
+    <string name="search_menu">جستجو</string>
+    <string name="add_menu">افزودن</string>
+    <string name="ioSlide_menu">پوشه ها</string>
+    <string name="grouping">گروه بندی ها :</string>
+    <string name="priorities_menu">اولویت ها</string>
+    <string name="pin">سنجاق</string>
+    <string name="note_delete">حذف</string>
+    <string name="pinning_note_add_edit_fragment">سنجاق کردن یادداشت</string>
+    <string name="title_note">جُستار</string>
+    <string name="des_note">توضیحات</string>
+    <string name="save_note">انباردن</string>
+    <string name="edit_folder">ویرایش</string>
+    <string name="delete_folder">حذف</string>
+    <string name="saveNewFolder">افزودن</string>
+    <string name="name_new_folder_add">نام پوشه</string>
+
+
+</resources>

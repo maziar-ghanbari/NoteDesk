@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ImageView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="@dimen/_50mdp"
+    android:layout_height="@dimen/_50mdp"
+    android:padding="@dimen/_10mdp"
+    android:background="@color/blueGray_100"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:src="@drawable/ic_baseline_cookie_24_folderation"
+    android:layout_margin="@dimen/_2mdp"/>
