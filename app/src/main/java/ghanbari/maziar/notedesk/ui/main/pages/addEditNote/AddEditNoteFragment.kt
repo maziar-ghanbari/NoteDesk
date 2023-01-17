@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.MutableLiveData
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 import ghanbari.maziar.notedesk.data.model.FolderEntity
@@ -26,8 +27,10 @@ class AddEditNoteFragment : BottomSheetDialogFragment() {
     private val viewModel: AddEditNoteViewModel by viewModels()
     private var isForUpdate = false
     private var prioritySelected: PriorityNote? = null
-
+    //folder for selecting current folder in note edit fragment
+    //private var folder = FolderEntity()
     private var note = NoteEntity()
+    private var oldFolderLiveData = MutableLiveData<FolderEntity>()
 
 
     override fun onCreateView(
@@ -52,15 +55,26 @@ class AddEditNoteFragment : BottomSheetDialogFragment() {
             }
             //get all folder
             //spinner folder
-            viewModel.getAllFodders()
+            viewModel.getAllFolders()
             viewModel.folderLiveData.observe(viewLifecycleOwner) {
                 when (it.state) {
                     MyResponse.DataState.SUCCESS -> {
+                        val data = it.data ?: mutableListOf<FolderEntity>()
+                        //spinner folder
                         folderSelectionSpinner.setUpFolderItemsWithAdapter(
-                            it.data ?: mutableListOf<FolderEntity>()
-                        ) { folder ->
-                            note.folderImg = folder.img
-                            note.folderTitle = folder.title
+                            data
+                        ) { folderSelected ->
+                            note.folder_id = folderSelected.id
+                        }
+                        //select old folder
+                        oldFolderLiveData.observe(viewLifecycleOwner) { oldFolderSelected ->
+                            i@for (i in data) {
+                                if (i.id == oldFolderSelected.id) {
+                                    val index = data.indexOf(i)
+                                    folderSelectionSpinner.setSelection(index)
+                                    break@i
+                                }
+                            }
                         }
                     }
                     MyResponse.DataState.ERROR -> {
@@ -99,6 +113,7 @@ class AddEditNoteFragment : BottomSheetDialogFragment() {
                     note.time = getCurrentTime()
                     viewModel.insertNote(note)
                 }
+                //TODO snackBar for success
                 dismiss()
             }
         }
@@ -108,25 +123,27 @@ class AddEditNoteFragment : BottomSheetDialogFragment() {
         binding?.apply {
             arguments?.let {
                 val id = it.getInt(ARG_ID_NOTE_UPDATE, -1)
-                Toast.makeText(requireContext(), id.toString(), Toast.LENGTH_SHORT).show()
+
+                Log.e(TAG, "onClickAdapters: $id")
                 if (id == -1) return
-                viewModel.getNoteById(id)
+                viewModel.getNoteRelatedById(id)
                 viewModel.noteLiveData.observe(viewLifecycleOwner) { response ->
                     response.data?.get(0)?.let { noteUpdate ->
                         when (response.state) {
                             MyResponse.DataState.SUCCESS -> {
                                 note.id = id
-                                note.time = noteUpdate.time
-                                note.date = noteUpdate.date
-                                titleNoteEdtTxt.setText(noteUpdate.title)
-                                desNoteEdtTxt.setText(noteUpdate.des)
-                                pinCheckbox.isChecked = noteUpdate.isPinned
+                                note.time = noteUpdate.note.time
+                                note.date = noteUpdate.note.date
+                                titleNoteEdtTxt.setText(noteUpdate.note.title)
+                                desNoteEdtTxt.setText(noteUpdate.note.des)
+                                pinCheckbox.isChecked = noteUpdate.note.isPinned
+                                note.folder_id = noteUpdate.note.folder_id
                                 //show delete option when it is for update (it is for insert)
                                 deleteNoteTxt.isShown(true)
                                 //select old priority
-                                val (color, priorityNote) = viewModel.getArrayPriorityItemsSpinner()
+                                val (_, priorityNote) = viewModel.getArrayPriorityItemsSpinner()
                                     .unzip()
-                                val statePriority = when (noteUpdate.priority) {
+                                val statePriority = when (noteUpdate.note.priority) {
                                     PriorityNote.LOW.name -> {
                                         PriorityNote.LOW
                                     }
@@ -143,7 +160,9 @@ class AddEditNoteFragment : BottomSheetDialogFragment() {
                                 val priorityId = priorityNote.indexOf(statePriority)
                                 prioritySelectionSpinner.setSelection(priorityId)
                                 //select old folder
-                                // TODO
+                                oldFolderLiveData.value = noteUpdate.folder
+
+                                //update
                                 isForUpdate = true
                             }
                             MyResponse.DataState.EMPTY -> {

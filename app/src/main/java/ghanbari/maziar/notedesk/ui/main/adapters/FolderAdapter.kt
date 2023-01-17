@@ -36,11 +36,11 @@ class FolderAdapter @Inject constructor(@ApplicationContext private val context:
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         //no option for operation item
+        holder.setIsRecyclable(false)
         holder.bindData(foldersList[position],position)
     }
 
     override fun getItemCount(): Int = foldersList.size
-    override fun getItemViewType(position: Int): Int = position
 
     //onItemClick & onOptionsClock
     private var onItemClick: ((FolderEntity) -> Unit)? = null
@@ -100,35 +100,12 @@ class FolderAdapter @Inject constructor(@ApplicationContext private val context:
     }
 
     fun setData(data: MutableList<FolderEntity>) {
-        val datao = addOperationFolders(data)
-        val callback = DiffUtilsCallBack(datao, foldersList.toMutableList())
+        val callback = DiffUtilsCallBack(data, foldersList.toMutableList())
         val differ = DiffUtil.calculateDiff(callback)
-        foldersList = datao
+        foldersList = data
         differ.dispatchUpdatesTo(this)
     }
 
-    //add default OperationFolders
-    private fun addOperationFolders(data: MutableList<FolderEntity>) : MutableList<FolderEntity>{
-        val datao = mutableListOf<FolderEntity>()
-        datao.addAll(data)
-        datao.add(
-            dFolderOperation[0],
-            FolderEntity(
-                img = R.drawable.ic_baseline_density_small_24_folderation,
-                title = ALL_FOLDER
-            )
-        )
-        datao.add(
-            dFolderOperation[1],
-            FolderEntity(img = R.drawable.ic_baseline_folder_off_24_folderation, title = NO_FOLDER)
-        )
-
-        datao.add(
-            dFolderOperation[2],
-            FolderEntity(img = R.drawable.ic_baseline_add_24, title = ADD_FOLDER)
-        )
-        return datao
-    }
 
     class DiffUtilsCallBack(
         private val oldItem: MutableList<FolderEntity>,

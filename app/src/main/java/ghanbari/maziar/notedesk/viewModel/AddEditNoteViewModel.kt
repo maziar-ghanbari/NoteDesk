@@ -1,17 +1,16 @@
 package ghanbari.maziar.notedesk.viewModel
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import ghanbari.maziar.notedesk.R
 import ghanbari.maziar.notedesk.data.model.FolderEntity
+import ghanbari.maziar.notedesk.data.model.NoteAndFolder
 import ghanbari.maziar.notedesk.data.model.NoteEntity
 import ghanbari.maziar.notedesk.data.repository.AddEditNoteRepository
 import ghanbari.maziar.notedesk.utils.MyResponse
 import ghanbari.maziar.notedesk.utils.PriorityNote
-import ghanbari.maziar.notedesk.utils.TAG
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -20,18 +19,15 @@ import javax.inject.Inject
 class AddEditNoteViewModel @Inject constructor(private val repository : AddEditNoteRepository) : ViewModel() {
 
     //received Note
-    val noteLiveData = MutableLiveData<MyResponse<MutableList<NoteEntity>>>()
+    val noteLiveData = MutableLiveData<MyResponse<MutableList<NoteAndFolder>>>()
 
-    fun getNoteById(id : Int) = viewModelScope.launch(IO) {
-        repository.getNoteById(id).collect{
+    fun getNoteRelatedById(id : Int) = viewModelScope.launch(IO) {
+        repository.getNoteRelatedById(id).collect{
             noteLiveData.postValue(it)
         }
     }
     //insert a note
-    fun insertNote(note: NoteEntity) = viewModelScope.launch(IO) {
-        repository.insertNote(note)
-        Log.e(TAG, "insertNote: ")
-    }
+    fun insertNote(note: NoteEntity) = viewModelScope.launch(IO) { repository.insertNote(note) }
 
     //updateNote
     fun updateNote(note: NoteEntity) = viewModelScope.launch(IO) { repository.updateNote(note) }
@@ -43,7 +39,7 @@ class AddEditNoteViewModel @Inject constructor(private val repository : AddEditN
     val folderLiveData = MutableLiveData<MyResponse<MutableList<FolderEntity>>>()
 
     //get all folders
-    fun getAllFodders() = viewModelScope.launch(IO) {
+    fun getAllFolders() = viewModelScope.launch(IO) {
         repository.getAllFolders().collect{
             folderLiveData.postValue(it)
         }

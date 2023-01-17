@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import dagger.hilt.android.qualifiers.ApplicationContext
 import ghanbari.maziar.notedesk.R
-import ghanbari.maziar.notedesk.data.model.NoteEntity
+import ghanbari.maziar.notedesk.data.model.NoteAndFolder
 import ghanbari.maziar.notedesk.databinding.ItemNoteRecyclerBinding
 import ghanbari.maziar.notedesk.utils.PriorityNote
 import ghanbari.maziar.notedesk.utils.isShown
@@ -21,7 +21,7 @@ class NoteAdapter @Inject constructor(@ApplicationContext private val context: C
     RecyclerView.Adapter<NoteAdapter.ViewHolder>() {
 
     private lateinit var binding: ItemNoteRecyclerBinding
-    private var noteList = emptyList<NoteEntity>()
+    private var noteList = emptyList<NoteAndFolder>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         binding =
@@ -39,35 +39,35 @@ class NoteAdapter @Inject constructor(@ApplicationContext private val context: C
 
     inner class ViewHolder() : RecyclerView.ViewHolder(binding.root) {
         @SuppressLint("SetTextI18n")
-        fun bindData(note: NoteEntity) {
+        fun bindData(noteAndFolder: NoteAndFolder) {
             binding.apply {
                 //title
-                itemNoteTitleTxt.text = note.title
+                itemNoteTitleTxt.text = noteAndFolder.note.title
                 //des
-                itemNoteDesTxt.text = note.des
+                itemNoteDesTxt.text = noteAndFolder.note.des
                 //on edit click listener
                 itemNoteEditImg.setOnClickListener {
-                    onEditClickListener?.let { edt -> edt(note) }
+                    onEditClickListener?.let { edt -> edt(noteAndFolder) }
                 }
                 //on item click listener
                 itemNoteCardBody.setOnClickListener {
-                    onItemClickListener?.let { item -> item(note) }
+                    // onItemClickListener?.let { item -> item(note) }
                 }
                 itemNotePriorityColor.setOnClickListener {
-                    onItemClickListener?.let { item -> item(note) }
+                    onItemClickListener?.let { item -> item(noteAndFolder) }
                 }
                 ////itemNoteFolderTxt.compoundPaddingTop,itemNoteFolderTxt.compoundPaddingRight,itemNoteFolderTxt.compoundPaddingBottom
                 //folder icon
                 itemNoteFolderTxt.setCompoundDrawablesWithIntrinsicBounds(
-                    note.folderImg,
+                    noteAndFolder.folder.img,
                     itemNoteFolderTxt.compoundPaddingTop,
                     itemNoteFolderTxt.compoundPaddingRight,
                     itemNoteFolderTxt.compoundPaddingBottom
                 )
                 //folder name
-                itemNoteFolderTxt.text = note.folderTitle
+                itemNoteFolderTxt.text = noteAndFolder.folder.title
                 //date and time
-                itemNoteDateTimeTxt.text = "${note.date} ~ ${note.time}"
+                itemNoteDateTimeTxt.text = "${noteAndFolder.note.date} ~ ${noteAndFolder.note.time}"
                 //date and time icon
                 itemNoteDateTimeTxt.setCompoundDrawablesWithIntrinsicBounds(
                     R.drawable.ic_twotone_calendar_month_24,
@@ -76,7 +76,7 @@ class NoteAdapter @Inject constructor(@ApplicationContext private val context: C
                     itemNoteDateTimeTxt.compoundPaddingBottom
                 )
                 //find priority of note
-                val priorityColor = when (note.priority) {
+                val priorityColor = when (noteAndFolder.note.priority) {
                     PriorityNote.HIGH.name -> {
                         R.color.priority_high
                     }
@@ -95,24 +95,24 @@ class NoteAdapter @Inject constructor(@ApplicationContext private val context: C
                     ContextCompat.getColor(context, priorityColor),
                     android.graphics.PorterDuff.Mode.SRC_IN
                 )
-                itemNotePinImg.isShown(note.isPinned)
+                itemNotePinImg.isShown(noteAndFolder.note.isPinned)
             }
         }
     }
 
     //on item click listener
-    private var onItemClickListener: ((note: NoteEntity) -> Unit)? = null
-    fun setOnItemClickListener(onItemClickListener: (note: NoteEntity) -> Unit) {
+    private var onItemClickListener: ((note: NoteAndFolder) -> Unit)? = null
+    fun setOnItemClickListener(onItemClickListener: (note: NoteAndFolder) -> Unit) {
         this.onItemClickListener = onItemClickListener
     }
 
     //on edit click listener
-    private var onEditClickListener: ((note: NoteEntity) -> Unit)? = null
-    fun setOnEditClickListener(onEditClickListener: (note: NoteEntity) -> Unit) {
+    private var onEditClickListener: ((note: NoteAndFolder) -> Unit)? = null
+    fun setOnEditClickListener(onEditClickListener: (note: NoteAndFolder) -> Unit) {
         this.onEditClickListener = onEditClickListener
     }
 
-    fun setData(data: MutableList<NoteEntity>) {
+    fun setData(data: MutableList<NoteAndFolder>) {
         val callback = DiffUtilsCallBack(data, noteList.toMutableList())
         val differ = DiffUtil.calculateDiff(callback)
         noteList = data
@@ -120,8 +120,8 @@ class NoteAdapter @Inject constructor(@ApplicationContext private val context: C
     }
 
     class DiffUtilsCallBack(
-        private val oldItem: MutableList<NoteEntity>,
-        private val newItem: MutableList<NoteEntity>
+        private val oldItem: MutableList<NoteAndFolder>,
+        private val newItem: MutableList<NoteAndFolder>
     ) : DiffUtil.Callback() {
         override fun getOldListSize(): Int = oldItem.size
 

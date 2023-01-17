@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import ghanbari.maziar.notedesk.R
 import ghanbari.maziar.notedesk.data.model.FolderEntity
+import ghanbari.maziar.notedesk.data.model.NoteAndFolder
 import ghanbari.maziar.notedesk.data.model.NoteEntity
 import ghanbari.maziar.notedesk.data.repository.MainRepository
 import ghanbari.maziar.notedesk.utils.*
@@ -20,10 +21,10 @@ class MainViewModel @Inject constructor(private val repository: MainRepository) 
 
     //***notes***
     //in any data change in livedatas
-    //complex database note list with operators and send the result to view
+    //mix database note list with operators and send the result to view
     private fun connectionDatabaseAndOperator(
         noteOperator: NoteOperator?,
-        noteDatabase: MyResponse<MutableList<NoteEntity>>?
+        noteDatabase: MyResponse<MutableList<NoteAndFolder>>?
     ) {
         receiveNotesLiveData.postValue(MyResponse.loading())
         when (noteDatabase?.state) {
@@ -103,24 +104,25 @@ class MainViewModel @Inject constructor(private val repository: MainRepository) 
     }
 
     //stateFlows for database note and operator notes and receive notes
-    val receiveNotesLiveData = MutableLiveData<MyResponse<MutableList<NoteEntity>>>()
+    val receiveNotesLiveData = MutableLiveData<MyResponse<MutableList<NoteAndFolder>>>()
     val _operatorNotesStateFlow = MutableStateFlow<NoteOperator>(NoteOperator.getAllNotes())
     private val operatorNotesStateFlow get() = _operatorNotesStateFlow //collect
     private val _databaseNotesStateFlow =
-        MutableStateFlow<MyResponse<MutableList<NoteEntity>>>(MyResponse.empty())
+        MutableStateFlow<MyResponse<MutableList<NoteAndFolder>>>(MyResponse.empty())
     private val databaseNotesStateFlow get() = _databaseNotesStateFlow
+
     //init database notes content
     fun connectToModel() = viewModelScope.launch(IO) {
         //set collector to stateFlows
         databaseNoteCollector()
         operatorNoteCollector()
-        repository.getAllNotes().collect {
+        repository.getAllNotesRelated().collect {
             //if they are same , it is no important because the important is changing data of objects in list
-            if (databaseNotesStateFlow.value.data == it.data){
+            if (databaseNotesStateFlow.value.data == it.data) {
                 it.errorMessage = "${it.errorMessage}."
-                _databaseNotesStateFlow.emit(it)
             }
             //check if is (error or empty or loading) or (success)
+
             _databaseNotesStateFlow.emit(it)
         }
     }
@@ -143,8 +145,8 @@ class MainViewModel @Inject constructor(private val repository: MainRepository) 
     fun insertNote(note: NoteEntity) = viewModelScope.launch(IO) { repository.insertNote(note) }
 
     //updateNote
-    private fun updateNote(vararg notes: NoteEntity) =
-        viewModelScope.launch(IO) { repository.updateNote(notes = notes.map { it }.toTypedArray()) }
+    private fun updateNote(notes: NoteEntity) =
+        viewModelScope.launch(IO) { repository.updateNote(notes) }
 
     //deleteNote
     fun deleteNote(note: NoteEntity) = viewModelScope.launch(IO) { repository.deleteNote(note) }
@@ -160,10 +162,16 @@ class MainViewModel @Inject constructor(private val repository: MainRepository) 
 
     //default folder after first launch
     fun getDefaultFolders() = listOf(
-        FolderEntity(img = R.drawable.ic_twotone_home_24_folderation, title = "خانه"),
+        FolderEntity(img = R.drawable.ic_baseline_folder_off_24_folderation, title = NO_FOLDER),
         FolderEntity(img = R.drawable.ic_twotone_work_24_folderaion, title = "کار"),
         FolderEntity(img = R.drawable.ic_baseline_school_24_folderation, title = "آموزش"),
         FolderEntity(img = R.drawable.ic_baseline_shopping_cart_folderation_24, title = "خرید")
+    )
+
+    //operation folders
+    fun operationFolderAtTop() = mutableListOf(
+        FolderEntity(img = R.drawable.ic_baseline_density_small_24_folderation, title = ALL_FOLDER),
+        FolderEntity(img = R.drawable.ic_baseline_add_24, title = ADD_FOLDER)
     )
 
     //insert a folder
@@ -177,7 +185,7 @@ class MainViewModel @Inject constructor(private val repository: MainRepository) 
     //deleteFolder
     fun deleteFolder(folder: FolderEntity) = viewModelScope.launch(IO) {
         repository.deleteFolder(folder)
-        val list = mutableListOf<NoteEntity>()
+        /*val list = mutableListOf<NoteEntity>()
         receiveNotesLiveData.value?.data?.forEach {
             //export notes in folder witch deleted
             if (it.folderTitle == folder.title || it.folderImg == folder.img) {
@@ -187,7 +195,7 @@ class MainViewModel @Inject constructor(private val repository: MainRepository) 
             }
         }
         //varag insert notes
-        updateNote(notes = list.map { it }.toTypedArray())
+        updateNote(notes = list.map { it }.toTypedArray())*/
     }
 
     /*FolderEntity(0, R.drawable.ic_baseline_add_24, "add"),

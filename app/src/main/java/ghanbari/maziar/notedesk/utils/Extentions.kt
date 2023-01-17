@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.LayoutManager
 import ghanbari.maziar.notedesk.R
 import ghanbari.maziar.notedesk.data.model.FolderEntity
+import ghanbari.maziar.notedesk.data.model.NoteAndFolder
 import ghanbari.maziar.notedesk.data.model.NoteEntity
 import ghanbari.maziar.notedesk.databinding.SpinnerItemFolderBinding
 import ghanbari.maziar.notedesk.databinding.SpinnerItemFolderSelectedBinding
@@ -46,10 +47,10 @@ fun View.showBut(paitiAr1: View? = null, paitiAr2: View? = null) {
 //****notes entity list operators****
 
 //get notes by title search
-fun MutableList<NoteEntity>.byTitleSearch(title: String): MutableList<NoteEntity> {
-    val result = mutableListOf<NoteEntity>()
+fun MutableList<NoteAndFolder>.byTitleSearch(title: String): MutableList<NoteAndFolder> {
+    val result = mutableListOf<NoteAndFolder>()
     this.forEach {
-        if (it.title.contains(title, true)) {
+        if (it.note!!.title.contains(title, true)) {
             result.add(it)
         }
     }
@@ -57,10 +58,10 @@ fun MutableList<NoteEntity>.byTitleSearch(title: String): MutableList<NoteEntity
 }
 
 //get notes by folder search
-fun MutableList<NoteEntity>.byFolderSearch(folder: String): MutableList<NoteEntity> {
-    val result = mutableListOf<NoteEntity>()
+fun MutableList<NoteAndFolder>.byFolderSearch(folder: String): MutableList<NoteAndFolder> {
+    val result = mutableListOf<NoteAndFolder>()
     this.forEach {
-        if (it.folderTitle.contains(folder, true)) {
+        if (it.folder!!.title.contains(folder, true)) {
             result.add(it)
         }
     }
@@ -68,10 +69,10 @@ fun MutableList<NoteEntity>.byFolderSearch(folder: String): MutableList<NoteEnti
 }
 
 //get note by id search
-fun MutableList<NoteEntity>.byIdSearch(id: Int): MutableList<NoteEntity> {
-    val result = mutableListOf<NoteEntity>()
+fun MutableList<NoteAndFolder>.byIdSearch(id: Int): MutableList<NoteAndFolder> {
+    val result = mutableListOf<NoteAndFolder>()
     this.forEach {
-        if (it.id == id) {
+        if (it.note!!.id == id) {
             result.add(it)
             return result
         }
@@ -80,10 +81,10 @@ fun MutableList<NoteEntity>.byIdSearch(id: Int): MutableList<NoteEntity> {
 }
 
 //get notes by priority search
-fun MutableList<NoteEntity>.byPrioritySearch(priority: String): MutableList<NoteEntity> {
-    val result = mutableListOf<NoteEntity>()
+fun MutableList<NoteAndFolder>.byPrioritySearch(priority: String): MutableList<NoteAndFolder> {
+    val result = mutableListOf<NoteAndFolder>()
     this.forEach {
-        if (it.priority.contains(priority, true)) {
+        if (it.note!!.priority.contains(priority, true)) {
             result.add(it)
         }
     }
@@ -91,21 +92,21 @@ fun MutableList<NoteEntity>.byPrioritySearch(priority: String): MutableList<Note
 }
 
 //get notes by pin search
-fun MutableList<NoteEntity>.orderByPinSearch(): MutableList<NoteEntity> {
-    val result = mutableListOf<NoteEntity>()
+fun MutableList<NoteAndFolder>.orderByPinSearch(): MutableList<NoteAndFolder> {
+    val result = mutableListOf<NoteAndFolder>()
     result.addAll(this)
     result.sortBy {
-        it.isPinned
+        it.note!!.isPinned
     }
     Log.e(TAG, "orderByPinSearch: $result\n$this")
     return result
 }
 
 //get notes by date search
-fun MutableList<NoteEntity>.byDateSearch(date: String): MutableList<NoteEntity> {
-    val result = mutableListOf<NoteEntity>()
+fun MutableList<NoteAndFolder>.byDateSearch(date: String): MutableList<NoteAndFolder> {
+    val result = mutableListOf<NoteAndFolder>()
     this.forEach {
-        if (it.date.contains(date, true)) {
+        if (it.note!!.date.contains(date, true)) {
             result.add(it)
         }
     }
@@ -187,11 +188,6 @@ fun Spinner.setUpFolderItemsWithAdapter(
     folders: MutableList<FolderEntity>,
     callback: (FolderEntity) -> Unit
 ) {
-    //no folder
-    folders.add(
-        0,
-        FolderEntity(img = R.drawable.ic_baseline_folder_off_24_folderation, title = NO_FOLDER)
-    )
     val adapterB = object : BaseAdapter() {
 
         private lateinit var binding_selected_item: SpinnerItemFolderSelectedBinding

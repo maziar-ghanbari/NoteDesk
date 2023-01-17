@@ -18,6 +18,10 @@
     <string name="delete_folder">حذف</string>
     <string name="saveNewFolder">افزودن</string>
     <string name="name_new_folder_add">نام پوشه</string>
+    <string name="add_folder_new">افزودن پوشه نو</string>
 
+    <!--snackBar message-->
+    <string name="success_update_folder_properties_in_notes">مشخصات پوشه بروزآوری شد</string>
+    <string name="fail_update_folder_properties_in_notes">بروز آوری مشخصات پوشه موفقیت آمیز نبود</string>
 
 </resources>

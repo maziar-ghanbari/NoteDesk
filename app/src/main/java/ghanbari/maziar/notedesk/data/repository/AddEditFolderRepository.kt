@@ -1,7 +1,9 @@
 package ghanbari.maziar.notedesk.data.repository
 
 import ghanbari.maziar.notedesk.data.local.FolderDao
+import ghanbari.maziar.notedesk.data.local.NoteDao
 import ghanbari.maziar.notedesk.data.model.FolderEntity
+import ghanbari.maziar.notedesk.data.model.NoteEntity
 import ghanbari.maziar.notedesk.utils.MyResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.catch
@@ -24,4 +26,8 @@ class AddEditFolderRepository @Inject constructor(private val folderDao : Folder
 
     //insertFolder
     suspend fun insertFolder(folder: FolderEntity) = folderDao.insertFolder(folder)
+
+    //updateFolder
+    suspend fun updateFolder(folder: FolderEntity) = folderDao.updateFolder(folder)
+
 }

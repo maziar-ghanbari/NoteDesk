@@ -2,11 +2,11 @@ package ghanbari.maziar.notedesk.ui.main
 
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
@@ -74,8 +74,12 @@ class MainFragment : Fragment() {
                 when (it.state) {
                     MyResponse.DataState.SUCCESS -> {
                         //set data to adapter
+                        //operation folder att top
+                        val allFolders = viewModel.operationFolderAtTop()
+                        //all folder
                         it.data?.let { data ->
-                            folderAdapter.setData(data)
+                            allFolders.addAll(data)
+                            folderAdapter.setData(allFolders)
                             numberOfFolders = data.size
                         }
                         //init recycler
@@ -156,14 +160,14 @@ class MainFragment : Fragment() {
     private fun onClickAdapters(){
         //note item click
         noteAdapter.setOnItemClickListener {
-            viewModel.deleteNote(it)
+            //viewModel.deleteNote(it)
         }
         //edit click
         noteAdapter.setOnEditClickListener {
             activity?.let { act ->
                 val updatePage = AddEditNoteFragment()
                 val bundle = Bundle()
-                bundle.putInt(ARG_ID_NOTE_UPDATE, it.id)
+                bundle.putInt(ARG_ID_NOTE_UPDATE, it.note.id)
                 updatePage.arguments = bundle
                 updatePage.show(act.supportFragmentManager, updatePage.tag)
             }
@@ -173,8 +177,6 @@ class MainFragment : Fragment() {
             when(it.title){
                 ADD_FOLDER -> {
                     //open fragment add folder
-                    Toast.makeText(requireContext()
-                        ,"$numberOfFolders < $MAX_OF_NUMBER_OF_FOLDERS",Toast.LENGTH_SHORT).show()
                     if(numberOfFolders < MAX_OF_NUMBER_OF_FOLDERS) {
                         activity?.let { act ->
                             val folderEditAdd = AddEditFolderFragment()
@@ -182,15 +184,37 @@ class MainFragment : Fragment() {
                         }
                     }
                 }
+                ALL_FOLDER -> {
+                    lifecycleScope.launch(Dispatchers.IO) {
+                        viewModel._operatorNotesStateFlow.emit(NoteOperator.getAllNotes())
+                    }
+                }
+                else -> {
+                    lifecycleScope.launch(Dispatchers.IO) {
+                        viewModel._operatorNotesStateFlow.emit(NoteOperator.getByFolderSearch(it.title))
+                    }
+                }
             }
         }
         //folder adapter option item click
         folderAdapter.setOnOptionsClickListener { controll , folder ->
+            //menu option folders
             when (controll){
                 EDIT_FOLDER ->{
-                    //TODO edit folder
+                    //edit folder icon & title
+                    activity?.let { act ->
+                        val folderEditAdd = AddEditFolderFragment()
+                        val bundle = Bundle()
+                        Log.e(TAG, "onClickAdapters: ${folder.title} ${folder.id} ${folder.img}")
+                        bundle.putInt(ARG_ID_FOLDER_UPDATE, folder.id)
+                        bundle.putString(ARG_TITLE_FOLDER_UPDATE,folder.title)
+                        bundle.putInt(ARG_ICON_FOLDER_UPDATE,folder.img)
+                        folderEditAdd.arguments = bundle
+                        folderEditAdd.show(act.supportFragmentManager, folderEditAdd.tag)
+                    }
                 }
                 DELETE_FOLDER ->{
+                    //delete folder dialog show
                     AlertDialog.Builder(requireContext())
                         .setTitle("حذف پوشه")
                         .setMessage("آیا از حذف پوشه ${folder.title} مطمئنید؟")

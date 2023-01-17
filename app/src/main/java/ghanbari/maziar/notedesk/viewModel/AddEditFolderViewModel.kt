@@ -1,11 +1,14 @@
 package ghanbari.maziar.notedesk.viewModel
 
+import android.content.Context
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import ghanbari.maziar.notedesk.R
 import ghanbari.maziar.notedesk.data.model.FolderEntity
+import ghanbari.maziar.notedesk.data.model.NoteEntity
 import ghanbari.maziar.notedesk.data.repository.AddEditFolderRepository
 import ghanbari.maziar.notedesk.utils.*
 import kotlinx.coroutines.Dispatchers.IO
@@ -13,11 +16,17 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class AddEditFolderViewModel @Inject constructor(private val repository: AddEditFolderRepository) :
-    ViewModel() {
+class AddEditFolderViewModel @Inject constructor(
+    private val repository: AddEditFolderRepository
+) : ViewModel() {
     //get suggestion folder icons
     val folderSuggestionIconLiveData = MutableLiveData<MyResponse<MutableList<Int>>>()
     var folderNoSuggestionTitle = mutableListOf<String>()
+
+    //old folder title | icon
+    val oldFolderData = FolderEntity()
+    //show result message of update operation folder properties live data
+    //val resultMessageLiveData = MutableLiveData<MyResponse<String>>()
 
     //get all folders to prevent repeating name or icon folder
     fun getSuggestIconTitleFolder() = viewModelScope.launch(IO) {
@@ -58,6 +67,43 @@ class AddEditFolderViewModel @Inject constructor(private val repository: AddEdit
     fun insertFolder(folder: FolderEntity) =
         viewModelScope.launch(IO) { repository.insertFolder(folder) }
 
+    //update folder
+    fun updateFolder(folder: FolderEntity) =
+        viewModelScope.launch(IO) {
+            //update notes folder name | icon
+            /*repository.getAllNotes().collect {
+                when (it.state) {
+                    MyResponse.DataState.SUCCESS -> {
+                        //update notes folder name | icon
+                        it.data?.let { notes ->
+                            notes.forEach { note ->
+                                //if note is in this folder update properties of it
+                                if (oldFolderData.title == note.folderTitle || oldFolderData.img == note.folderImg){
+                                    note.folderImg = folder.img
+                                    note.folderTitle = folder.title
+                                    updateNote(note)
+                                }
+                            }
+                        }
+                        //update Folder
+                        repository.updateFolder(folder)
+                        resultMessageLiveData.postValue(
+                            MyResponse(state = MyResponse.DataState.SUCCESS)
+                        )
+                    }
+                    MyResponse.DataState.ERROR -> {
+                        //fail update folders name | icon show error folder name | icon
+                        resultMessageLiveData.postValue(
+                            MyResponse(state = MyResponse.DataState.ERROR)
+                        )
+                    }
+                    else -> {}
+                }
+            }*/
+            //update folder name | icon
+            repository.updateFolder(folder)
+        }
+
     //all folder
     private fun allIconFolder() = mutableListOf(
         R.drawable.ic_baseline_cookie_24_folderation,
@@ -80,4 +126,5 @@ class AddEditFolderViewModel @Inject constructor(private val repository: AddEdit
         NO_FOLDER,
         DELETE_FOLDER
     )
+
 }
