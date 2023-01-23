@@ -68,7 +68,8 @@ class AddEditFolderFragment : DialogFragment() {
                         }
                     }
                     MyResponse.DataState.ERROR -> {
-                        //TODO snackbar error and close fragment
+                        requireActivity().snackBar(R.color.holo_red_dark,"خطا : ${it.errorMessage.toString()}")
+                        dismiss()
                     }
                     else -> {}
                 }
@@ -99,11 +100,23 @@ class AddEditFolderFragment : DialogFragment() {
             addFolderNewBtn.setOnClickListener {
                 //folder title edt
                 val folderTitle = folderTitleEdt.text.toString()
+                //folder title can not be empty
+                if (folderTitle.isEmpty()){
+                    requireActivity().snackBar(
+                        R.color.holo_blue_dark,
+                        getString(R.string.empty_title_of_folder_error)
+                    )
+                    return@setOnClickListener
+                }
                 //return if title is not suitable
                 val noSuitableTitles = viewModel.folderNoSuggestionTitle
-                noSuitableTitles.forEach {
-                    if (folderTitle == it) {
-                        //TODO title repeated snackbar
+                for (noPermission in noSuitableTitles){
+                    //if old title did not changed it is no problem
+                    if (folderTitle == folder.title) continue
+                    //if folder title determined by user is for another folder show error message
+                    // and do not update or insert in room or dismiss fragment
+                    if (folderTitle == noPermission) {
+                        requireActivity().snackBar(R.color.holo_blue_dark,getString(R.string.repeated_subject_folder))
                         return@setOnClickListener
                     }
                 }
@@ -112,11 +125,11 @@ class AddEditFolderFragment : DialogFragment() {
 
                 if (isForUpdate) {
                     viewModel.updateFolder(folder)
-                    //TODO snackbar SUCCESS insert new folder
+                    requireActivity().snackBar(R.color.holo_green_dark,getString(R.string.folder_upgraded_successfully))
                 } else {
                     //insert folder
                     viewModel.insertFolder(folder)
-                    //TODO snackbar SUCCESS insert new folder
+                    requireActivity().snackBar(R.color.holo_green_dark,getString(R.string.folder_insert_successfully))
                 }
                 dismiss()
             }
@@ -133,8 +146,7 @@ class AddEditFolderFragment : DialogFragment() {
                 Log.e(TAG, "checkArgs: $icon| $id| $title|")
                 if (id == -1 || icon == -1) return
                 //update view
-                //TODO add text title below to string folder
-                titleDialogTxt.text = "ویرایش نام و نمای پوشه"
+                titleDialogTxt.text = getString(R.string.subject_fragment_edit_folder)
                 isForUpdate = true
 
                 folder.id = id

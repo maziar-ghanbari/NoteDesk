@@ -74,12 +74,12 @@ class FolderAdapter @Inject constructor(@ApplicationContext private val context:
                     //Select
                     popupMenu.setOnMenuItemClickListener { menuItem ->
                         when (menuItem.itemId) {
-                            R.id.edit_folder -> {
+                            R.id.edit_folder_menu -> {
                                 onOptionsClick?.let {
                                     it(EDIT_FOLDER,folder)
                                 }
                             }
-                            R.id.delete_folder -> {
+                            R.id.delete_folder_menu -> {
                                 onOptionsClick?.let {
                                     it(DELETE_FOLDER,folder)
                                 }

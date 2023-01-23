@@ -5,11 +5,11 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Toast
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.MutableLiveData
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
+import ghanbari.maziar.notedesk.R
 import ghanbari.maziar.notedesk.data.model.FolderEntity
 import ghanbari.maziar.notedesk.data.model.NoteEntity
 import ghanbari.maziar.notedesk.databinding.FragmentAddEditNoteBinding
@@ -27,8 +27,6 @@ class AddEditNoteFragment : BottomSheetDialogFragment() {
     private val viewModel: AddEditNoteViewModel by viewModels()
     private var isForUpdate = false
     private var prioritySelected: PriorityNote? = null
-    //folder for selecting current folder in note edit fragment
-    //private var folder = FolderEntity()
     private var note = NoteEntity()
     private var oldFolderLiveData = MutableLiveData<FolderEntity>()
 
@@ -59,7 +57,7 @@ class AddEditNoteFragment : BottomSheetDialogFragment() {
             viewModel.folderLiveData.observe(viewLifecycleOwner) {
                 when (it.state) {
                     MyResponse.DataState.SUCCESS -> {
-                        val data = it.data ?: mutableListOf<FolderEntity>()
+                        val data = it.data ?: mutableListOf()
                         //spinner folder
                         folderSelectionSpinner.setUpFolderItemsWithAdapter(
                             data
@@ -78,7 +76,11 @@ class AddEditNoteFragment : BottomSheetDialogFragment() {
                         }
                     }
                     MyResponse.DataState.ERROR -> {
-
+                        requireActivity().snackBar(
+                            R.color.holo_red_dark,
+                            it.errorMessage.toString()
+                        )
+                        dismiss()
                     }
                     else -> {}
                 }
@@ -87,11 +89,20 @@ class AddEditNoteFragment : BottomSheetDialogFragment() {
             pinCheckbox.setOnCheckedChangeListener { _, isChecked ->
                 note.isPinned = isChecked
             }
-            //delete
+            //delete note
             deleteNoteTxt.setOnClickListener {
-                //TODO alert dialog for delete
-                viewModel.deleteNote(note)
-                dismiss()
+                //delete note show alert dialog
+                requireActivity().alertDialog(
+                    getString(R.string.delete_note_title),
+                    "آیا از حذف یادداشت (${titleNoteEdtTxt.text}) مطمئنید؟"
+                ){
+                    requireActivity().snackBar(
+                        R.color.holo_green_dark,
+                        getString(R.string.delete_note_successfully)
+                    )
+                    viewModel.deleteNote(note)
+                    dismiss()
+                }
             }
             //save update
             saveNoteBtn.setOnClickListener {
@@ -100,20 +111,34 @@ class AddEditNoteFragment : BottomSheetDialogFragment() {
                         TAG,
                         "onViewCreated: ${titleNoteEdtTxt.text.isEmpty()} ${desNoteEdtTxt.text.isEmpty()} ${prioritySelected == null}"
                     )
+                    //des & title can not be null
+                    requireActivity().snackBar(
+                        R.color.holo_blue_dark,
+                        getString(R.string.note_not_null_des_title)
+                    )
                     return@setOnClickListener
                 }
-                //TODO snackbar for null items
                 note.title = titleNoteEdtTxt.text.toString()
                 note.des = desNoteEdtTxt.text.toString()
 
                 if (isForUpdate) {
                     viewModel.updateNote(note)
+                    //update
+                    requireActivity().snackBar(
+                        R.color.holo_green_dark,
+                        getString(R.string.update_note_successfully)
+                    )
                 } else {
+                    //insert
                     note.date = getCurrentDate()
                     note.time = getCurrentTime()
                     viewModel.insertNote(note)
+                    requireActivity().snackBar(
+                        R.color.holo_green_dark,
+                        getString(R.string.insert_note_successfully)
+                    )
                 }
-                //TODO snackBar for success
+
                 dismiss()
             }
         }
@@ -166,10 +191,18 @@ class AddEditNoteFragment : BottomSheetDialogFragment() {
                                 isForUpdate = true
                             }
                             MyResponse.DataState.EMPTY -> {
-                                //TODO emptyError
+                                requireActivity().snackBar(
+                                    R.color.holo_red_dark,
+                                    "خطا"
+                                )
+                                dismiss()
                             }
                             MyResponse.DataState.ERROR -> {
-                                //TODO snackbar error
+                                requireActivity().snackBar(
+                                    R.color.holo_red_dark,
+                                    response.errorMessage.toString()
+                                )
+                                dismiss()
                             }
                             else -> {}
                         }

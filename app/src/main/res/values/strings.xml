@@ -13,15 +13,28 @@
     <string name="pinning_note_add_edit_fragment">سنجاق کردن یادداشت</string>
     <string name="title_note">جُستار</string>
     <string name="des_note">توضیحات</string>
-    <string name="save_note">انباردن</string>
-    <string name="edit_folder">ویرایش</string>
-    <string name="delete_folder">حذف</string>
-    <string name="saveNewFolder">افزودن</string>
+    <string name="save_note">ثبت</string>
+    <string name="edit_folder_menu">ویرایش</string>
+    <string name="delete_folder_menu">حذف</string>
+    <string name="saveNewFolder">ثبت</string>
     <string name="name_new_folder_add">نام پوشه</string>
-    <string name="add_folder_new">افزودن پوشه نو</string>
-
-    <!--snackBar message-->
-    <string name="success_update_folder_properties_in_notes">مشخصات پوشه بروزآوری شد</string>
-    <string name="fail_update_folder_properties_in_notes">بروز آوری مشخصات پوشه موفقیت آمیز نبود</string>
-
+    <string name="add_folder_new">افزودن پوشه</string>
+    <!--alert dialog-->
+    <string name="delete_folder_title">حذف پوشه</string>
+    <string name="delete_note_title">حذف یادداشت</string>
+    <string name="delete_folder_successfully">پوشه حذف شد!</string>
+    <string name="delete_note_successfully">یادداشت حذف شد!</string>
+    <string name="update_note_successfully">یادداشت بروز شد!</string>
+    <string name="insert_note_successfully">یادداشت افزوده شد!</string>
+    <string name="subject_fragment_edit_folder">ویرایش پوشه</string>
+    <string name="repeated_subject_folder">جُستار پوشه از قبل موجود است!</string>
+    <string name="folder_upgraded_successfully">پوشه بروز شد!</string>
+    <string name="folder_insert_successfully">پوشه افزوده شد!</string>
+    <string name="note_not_null_des_title">جُستار و توضیحات را پر کنید!</string>
+    <string name="exit_app_title">خروج از برنامه</string>
+    <string name="exit_app_message">آیا میخواهید از برنامه خارج شوید؟</string>
+    <string name="max_of_number_of_folder_error">به سقف تعداد پوشه ها رسیدید!</string>
+    <string name="empty_title_of_folder_error">نام پوشه نمی تواند تهی باشد!</string>
+    <!--filtering-->
+    <string name="note_filter_by_all_folder">نمایش همه یادداشت ها!</string>
 </resources>

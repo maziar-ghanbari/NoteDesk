@@ -108,7 +108,7 @@ class MainViewModel @Inject constructor(private val repository: MainRepository) 
     val _operatorNotesStateFlow = MutableStateFlow<NoteOperator>(NoteOperator.getAllNotes())
     private val operatorNotesStateFlow get() = _operatorNotesStateFlow //collect
     private val _databaseNotesStateFlow =
-        MutableStateFlow<MyResponse<MutableList<NoteAndFolder>>>(MyResponse.empty())
+        MutableStateFlow<MyResponse<MutableList<NoteAndFolder>>>(MyResponse.loading())
     private val databaseNotesStateFlow get() = _databaseNotesStateFlow
 
     //init database notes content
@@ -134,7 +134,7 @@ class MainViewModel @Inject constructor(private val repository: MainRepository) 
         }
     }
 
-    //set observer to note observer
+    //set observer to note operator
     private fun operatorNoteCollector() = viewModelScope.launch(IO) {
         operatorNotesStateFlow.collect {
             connectionDatabaseAndOperator(it, databaseNotesStateFlow.value)
@@ -160,14 +160,14 @@ class MainViewModel @Inject constructor(private val repository: MainRepository) 
         }
     }
 
-    //default folder after first launch
+    /*//default folder after first launch
     fun getDefaultFolders() = listOf(
         FolderEntity(img = R.drawable.ic_baseline_folder_off_24_folderation, title = NO_FOLDER),
         FolderEntity(img = R.drawable.ic_twotone_work_24_folderaion, title = "کار"),
         FolderEntity(img = R.drawable.ic_baseline_school_24_folderation, title = "آموزش"),
         FolderEntity(img = R.drawable.ic_baseline_shopping_cart_folderation_24, title = "خرید")
     )
-
+*/
     //operation folders
     fun operationFolderAtTop() = mutableListOf(
         FolderEntity(img = R.drawable.ic_baseline_density_small_24_folderation, title = ALL_FOLDER),

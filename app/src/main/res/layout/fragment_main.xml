@@ -1,28 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.motion.widget.MotionLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    tools:context=".ui.main.MainFragment"
-    android:background="@color/brown_50">
+    android:background="@color/brown_50"
+    app:layoutDescription="@xml/fragment_main_scene"
+    tools:context=".ui.main.MainFragment">
 
-
+    <!--NoteDesk Toolbar-->
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginBottom="1dp"
+        android:background="@color/green_300"
+        android:elevation="@dimen/_3mdp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:title="@string/app_name_persian"
+        app:titleCentered="true"
+        app:titleTextColor="@color/black" />
     <!--recycler slide menu-->
     <androidx.recyclerview.widget.RecyclerView
-            android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            app:layout_constraintBottom_toTopOf="@+id/bottom_menu_lay"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:layout_margin="@dimen/_10mdp"
-            android:background="@drawable/folder_recycler_bg"
-            android:paddingStart="@dimen/_3mdp"
-            android:paddingEnd="@dimen/_3mdp"
-            android:paddingTop="@dimen/_10mdp"
-            android:clipToPadding="false"
-            android:paddingBottom="@dimen/_10mdp"
-            android:id="@+id/slide_menu_recycler" />
+        android:layout_width="wrap_content"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/bottom_menu_lay"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/toolbar"
+        android:layout_marginTop="@dimen/_10mdp"
+        android:layout_marginEnd="@dimen/_10mdp"
+        android:layout_marginStart="@dimen/_10mdp"
+        android:layout_marginBottom="@dimen/_10mdp"
+        android:background="@drawable/folder_recycler_bg"
+        android:paddingStart="@dimen/_3mdp"
+        android:paddingEnd="@dimen/_3mdp"
+        android:paddingTop="@dimen/_10mdp"
+        android:clipToPadding="false"
+        android:paddingBottom="@dimen/_10mdp"
+        android:id="@+id/slide_menu_recycler" />
 
     <!--Bottom Menu lay-->
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -110,52 +127,66 @@
         app:layout_constraintEnd_toStartOf="@id/slide_menu_recycler"
         android:background="@drawable/search_box_bg"
         android:id="@+id/search_box_edtTxt"
-        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="@id/toolbar"
         android:padding="@dimen/_5mdp"
         android:layout_marginEnd="@dimen/_5mdp"
         android:layout_marginStart="@dimen/_5mdp"
         android:layout_marginTop="@dimen/_10mdp"
-        android:layout_marginBottom="@dimen/_5mdp"
         android:drawableEnd="@drawable/ic_baseline_search_24"
         android:hint="@string/search_menu"
         android:drawablePadding="@dimen/_3mdp"
         android:elevation="@dimen/_2mdp"
         android:inputType="textEmailSubject">
-        <!--<requestFocus/>-->
+
     </EditText>
-    <!--notes list recycler-->
-    <androidx.recyclerview.widget.RecyclerView
+    <!--note Lay-->
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="0dp"
         android:layout_height="0dp"
-
-        android:padding="@dimen/_3mdp"
-        android:clipToPadding="false"
-        android:id="@+id/notes_list_recycler"
+        android:id="@+id/noteLay"
+        android:layout_marginStart="@dimen/_5mdp"
+        android:layout_marginEnd="@dimen/_5mdp"
         app:layout_constraintTop_toBottomOf="@id/search_box_edtTxt"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toStartOf="@id/slide_menu_recycler"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        app:layout_constraintBottom_toTopOf="@id/bottom_menu_lay">
+            <!--notes list recycler-->
+            <androidx.recyclerview.widget.RecyclerView
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                android:layout_marginBottom="@dimen/_1mdp"
+                android:paddingStart="@dimen/_3mdp"
+                android:paddingEnd="@dimen/_3mdp"
+                android:paddingTop="@dimen/_3mdp"
+                android:paddingBottom="@dimen/_3mdp"
+                android:clipToPadding="false"
+                android:id="@+id/notes_list_recycler"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
 
-    <!--notes list progress-->
-    <ProgressBar
-        android:id="@+id/notes_list_progress"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/slide_menu_recycler"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+            <!--notes list progress-->
+            <ProgressBar
+                android:id="@+id/notes_list_progress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"/>
 
-    <!--notes list empty-->
-    <ImageView
-        android:visibility="gone"
-        android:id="@+id/notes_list_empty"
-        android:layout_width="@dimen/_60mdp"
-        android:layout_height="@dimen/_60mdp"
-        android:src="@drawable/empty_icon"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toStartOf="@id/slide_menu_recycler"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:tint="@color/teal_700" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+            <!--notes list empty-->
+            <ImageView
+                android:visibility="gone"
+                android:id="@+id/notes_list_empty"
+                android:layout_width="@dimen/_60mdp"
+                android:layout_height="@dimen/_60mdp"
+                android:src="@drawable/empty_icon"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:tint="@color/teal_700" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.motion.widget.MotionLayout>

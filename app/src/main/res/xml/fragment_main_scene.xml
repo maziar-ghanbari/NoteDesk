@@ -1,19 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
-<MotionScene 
+<MotionScene
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:motion="http://schemas.android.com/apk/res-auto">
 
     <Transition
-        motion:constraintSetEnd="@+id/end"
-        motion:constraintSetStart="@id/start"
-        motion:duration="1000">
+        motion:constraintSetEnd="@+id/state2"
+        motion:constraintSetStart="@id/state1"
+        motion:duration="500">
        <KeyFrameSet>
        </KeyFrameSet>
     </Transition>
 
-    <ConstraintSet android:id="@+id/start">
+    <ConstraintSet android:id="@+id/state1">
+
     </ConstraintSet>
 
-    <ConstraintSet android:id="@+id/end">
+    <ConstraintSet android:id="@+id/state2">
+        <!--open search box-->
+        <Constraint
+            android:layout_marginTop="@dimen/_10mdp"
+            android:layout_marginEnd="@dimen/_5mdp"
+            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            motion:layout_constraintTop_toBottomOf="@+id/toolbar"
+            motion:layout_constraintEnd_toStartOf="@id/slide_menu_recycler"
+            motion:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="@dimen/_5mdp"
+            android:id="@+id/search_box_edtTxt" />
+    </ConstraintSet>
+
+    <ConstraintSet android:id="@+id/state3" >
+        <!--open search box-->
+        <Constraint
+            android:layout_marginTop="@dimen/_10mdp"
+            android:layout_marginEnd="@dimen/_5mdp"
+            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            motion:layout_constraintTop_toBottomOf="@+id/toolbar"
+            motion:layout_constraintEnd_toStartOf="@id/slide_menu_recycler"
+            motion:layout_constraintStart_toStartOf="parent"
+            android:layout_marginStart="@dimen/_5mdp"
+            android:id="@+id/search_box_edtTxt" />
+        <!--close slide menu-->
+        <Constraint
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            motion:layout_constraintBottom_toTopOf="@+id/bottom_menu_lay"
+            android:layout_marginBottom="@dimen/_10mdp"
+            android:layout_marginEnd="0dp"
+            motion:layout_constraintTop_toBottomOf="@id/toolbar"
+            motion:layout_constraintStart_toEndOf="parent"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="@dimen/_10mdp"
+            android:id="@+id/slide_menu_recycler" />
+    </ConstraintSet>
+    <ConstraintSet android:id="@+id/state4" >
+
+        <!--close all-->
+        <Constraint
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            motion:layout_constraintBottom_toTopOf="@+id/bottom_menu_lay"
+            android:layout_marginBottom="@dimen/_10mdp"
+            android:layout_marginEnd="0dp"
+            motion:layout_constraintTop_toBottomOf="@id/toolbar"
+            motion:layout_constraintStart_toEndOf="parent"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="@dimen/_10mdp"
+            android:id="@+id/slide_menu_recycler" />
     </ConstraintSet>
 </MotionScene>

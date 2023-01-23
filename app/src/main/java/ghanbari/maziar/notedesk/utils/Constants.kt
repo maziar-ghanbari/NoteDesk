@@ -41,3 +41,11 @@ const val ADD_FOLDER = "افزودن\u200Cپوشه"
 const val NO_FOLDER = "بی\u200Cپوشه\u200Cها"
 const val ALL_FOLDER = "همه"
 const val MAX_OF_NUMBER_OF_FOLDERS = 9
+
+//open close searchBox and slideMenu(folders) by animation
+enum class SearchFolderAnimState(){
+    SEARCH_BOX_OPEN,
+    SLIDE_MENU_OPEN,
+    ALL_OPEN,
+    ALL_CLOSE
+}

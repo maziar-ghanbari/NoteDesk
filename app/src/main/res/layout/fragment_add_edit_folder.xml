@@ -46,7 +46,7 @@
         app:layout_constraintTop_toBottomOf="@id/close_img"
         app:layout_constraintEnd_toStartOf="@id/folder_icon_spinner"
         app:layout_constraintStart_toStartOf="parent">
-        <requestFocus />
+
     </EditText>
     <!--folder icon spinner-->
     <Spinner
