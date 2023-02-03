@@ -25,7 +25,7 @@ data class NoteEntity(
     var title: String = "",
     @ColumnInfo(name = NOTE_DES)
     var des: String = "",
-    @ColumnInfo(name = NOTE_FOLDER_ID, defaultValue = "1")//NO_FOLDER is default
+    @ColumnInfo(name = NOTE_FOLDER_ID, defaultValue = "1", index = true)//NO_FOLDER is default
     var folder_id :Int = 0,
     @ColumnInfo(name = NOTE_DATE)
     var date: String = "",

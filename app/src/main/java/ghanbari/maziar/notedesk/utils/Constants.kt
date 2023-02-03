@@ -31,6 +31,7 @@ enum class PriorityNote(){
 }
 //arg id for update
 const val ARG_ID_NOTE_UPDATE = "note_id_update"
+const val ARG_ID_NOTE_SHOW = "note_id_show"
 const val ARG_ID_FOLDER_UPDATE = "folder_id_update"
 const val ARG_TITLE_FOLDER_UPDATE = "folder_title_update"
 const val ARG_ICON_FOLDER_UPDATE = "folder_icon_update"
@@ -49,3 +50,7 @@ enum class SearchFolderAnimState(){
     ALL_OPEN,
     ALL_CLOSE
 }
+//notification channel
+const val CHANNEL_ID = "channel_id"
+//permission request code
+const val PERMISSION_REQUEST_CODE = 1021

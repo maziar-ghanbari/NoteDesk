@@ -1,6 +1,5 @@
 package ghanbari.maziar.notedesk.viewModel
 
-import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -109,7 +108,7 @@ class MainViewModel @Inject constructor(private val repository: MainRepository) 
     private val operatorNotesStateFlow get() = _operatorNotesStateFlow //collect
     private val _databaseNotesStateFlow =
         MutableStateFlow<MyResponse<MutableList<NoteAndFolder>>>(MyResponse.loading())
-    private val databaseNotesStateFlow get() = _databaseNotesStateFlow
+    val databaseNotesStateFlow get() = _databaseNotesStateFlow
 
     //init database notes content
     fun connectToModel() = viewModelScope.launch(IO) {
@@ -141,13 +140,6 @@ class MainViewModel @Inject constructor(private val repository: MainRepository) 
         }
     }
 
-    //insert a note
-    fun insertNote(note: NoteEntity) = viewModelScope.launch(IO) { repository.insertNote(note) }
-
-    //updateNote
-    private fun updateNote(notes: NoteEntity) =
-        viewModelScope.launch(IO) { repository.updateNote(notes) }
-
     //deleteNote
     fun deleteNote(note: NoteEntity) = viewModelScope.launch(IO) { repository.deleteNote(note) }
 
@@ -160,54 +152,12 @@ class MainViewModel @Inject constructor(private val repository: MainRepository) 
         }
     }
 
-    /*//default folder after first launch
-    fun getDefaultFolders() = listOf(
-        FolderEntity(img = R.drawable.ic_baseline_folder_off_24_folderation, title = NO_FOLDER),
-        FolderEntity(img = R.drawable.ic_twotone_work_24_folderaion, title = "کار"),
-        FolderEntity(img = R.drawable.ic_baseline_school_24_folderation, title = "آموزش"),
-        FolderEntity(img = R.drawable.ic_baseline_shopping_cart_folderation_24, title = "خرید")
-    )
-*/
     //operation folders
     fun operationFolderAtTop() = mutableListOf(
         FolderEntity(img = R.drawable.ic_baseline_density_small_24_folderation, title = ALL_FOLDER),
         FolderEntity(img = R.drawable.ic_baseline_add_24, title = ADD_FOLDER)
     )
 
-    //insert a folder
-    fun insertFolder(folder: FolderEntity) =
-        viewModelScope.launch(IO) { repository.insertFolder(folder) }
-
-    //updateFolder
-    fun updateFolder(folder: FolderEntity) =
-        viewModelScope.launch(IO) { repository.updateFolder(folder) }
-
     //deleteFolder
-    fun deleteFolder(folder: FolderEntity) = viewModelScope.launch(IO) {
-        repository.deleteFolder(folder)
-        /*val list = mutableListOf<NoteEntity>()
-        receiveNotesLiveData.value?.data?.forEach {
-            //export notes in folder witch deleted
-            if (it.folderTitle == folder.title || it.folderImg == folder.img) {
-                it.folderTitle = NO_FOLDER
-                it.folderImg = R.drawable.ic_baseline_folder_off_24_folderation
-                list.add(it)
-            }
-        }
-        //varag insert notes
-        updateNote(notes = list.map { it }.toTypedArray())*/
-    }
-
-    /*FolderEntity(0, R.drawable.ic_baseline_add_24, "add"),
-            FolderEntity(1, R.drawable.ic_baseline_search_24, "search"),
-            FolderEntity(2, R.drawable.ic_outline_stairs_24, "priority"),
-            FolderEntity(3, R.drawable.ic_twotone_door_sliding_24, "slide"),
-            FolderEntity(4, R.drawable.ic_baseline_add_24, "add"),
-            FolderEntity(5, R.drawable.ic_baseline_search_24, "search"),
-            FolderEntity(6, R.drawable.ic_outline_stairs_24, "priority"),
-            FolderEntity(7, R.drawable.ic_twotone_door_sliding_24, "slide"),
-            FolderEntity(8, R.drawable.ic_baseline_add_24, "add"),
-            FolderEntity(9, R.drawable.ic_baseline_search_24, "search"),
-            FolderEntity(10, R.drawable.ic_outline_stairs_24, "priority"),
-            FolderEntity(11, R.drawable.ic_twotone_door_sliding_24, "slide")*/
+    fun deleteFolder(folder: FolderEntity) = viewModelScope.launch(IO) { repository.deleteFolder(folder) }
 }

@@ -25,8 +25,6 @@ class AddEditFolderViewModel @Inject constructor(
 
     //old folder title | icon
     val oldFolderData = FolderEntity()
-    //show result message of update operation folder properties live data
-    //val resultMessageLiveData = MutableLiveData<MyResponse<String>>()
 
     //get all folders to prevent repeating name or icon folder
     fun getSuggestIconTitleFolder() = viewModelScope.launch(IO) {
@@ -68,41 +66,7 @@ class AddEditFolderViewModel @Inject constructor(
         viewModelScope.launch(IO) { repository.insertFolder(folder) }
 
     //update folder
-    fun updateFolder(folder: FolderEntity) =
-        viewModelScope.launch(IO) {
-            //update notes folder name | icon
-            /*repository.getAllNotes().collect {
-                when (it.state) {
-                    MyResponse.DataState.SUCCESS -> {
-                        //update notes folder name | icon
-                        it.data?.let { notes ->
-                            notes.forEach { note ->
-                                //if note is in this folder update properties of it
-                                if (oldFolderData.title == note.folderTitle || oldFolderData.img == note.folderImg){
-                                    note.folderImg = folder.img
-                                    note.folderTitle = folder.title
-                                    updateNote(note)
-                                }
-                            }
-                        }
-                        //update Folder
-                        repository.updateFolder(folder)
-                        resultMessageLiveData.postValue(
-                            MyResponse(state = MyResponse.DataState.SUCCESS)
-                        )
-                    }
-                    MyResponse.DataState.ERROR -> {
-                        //fail update folders name | icon show error folder name | icon
-                        resultMessageLiveData.postValue(
-                            MyResponse(state = MyResponse.DataState.ERROR)
-                        )
-                    }
-                    else -> {}
-                }
-            }*/
-            //update folder name | icon
-            repository.updateFolder(folder)
-        }
+    fun updateFolder(folder: FolderEntity) = viewModelScope.launch(IO) { repository.updateFolder(folder) }
 
     //all folder
     private fun allIconFolder() = mutableListOf(

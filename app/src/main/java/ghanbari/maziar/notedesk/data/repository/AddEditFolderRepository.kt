@@ -1,9 +1,7 @@
 package ghanbari.maziar.notedesk.data.repository
 
 import ghanbari.maziar.notedesk.data.local.FolderDao
-import ghanbari.maziar.notedesk.data.local.NoteDao
 import ghanbari.maziar.notedesk.data.model.FolderEntity
-import ghanbari.maziar.notedesk.data.model.NoteEntity
 import ghanbari.maziar.notedesk.utils.MyResponse
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.catch

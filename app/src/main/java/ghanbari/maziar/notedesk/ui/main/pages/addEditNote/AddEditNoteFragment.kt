@@ -1,7 +1,6 @@
 package ghanbari.maziar.notedesk.ui.main.pages.addEditNote
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -26,7 +25,6 @@ class AddEditNoteFragment : BottomSheetDialogFragment() {
     private val binding get() = _binding
     private val viewModel: AddEditNoteViewModel by viewModels()
     private var isForUpdate = false
-    private var prioritySelected: PriorityNote? = null
     private var note = NoteEntity()
     private var oldFolderLiveData = MutableLiveData<FolderEntity>()
 
@@ -107,14 +105,17 @@ class AddEditNoteFragment : BottomSheetDialogFragment() {
             //save update
             saveNoteBtn.setOnClickListener {
                 if (titleNoteEdtTxt.text.isEmpty() || desNoteEdtTxt.text.isEmpty()) {
-                    Log.e(
-                        TAG,
-                        "onViewCreated: ${titleNoteEdtTxt.text.isEmpty()} ${desNoteEdtTxt.text.isEmpty()} ${prioritySelected == null}"
-                    )
                     //des & title can not be null
                     requireActivity().snackBar(
                         R.color.holo_blue_dark,
-                        getString(R.string.note_not_null_des_title)
+                        getString(R.string.note_not_null_des_title),dialog?.window?.decorView
+                    )
+                    return@setOnClickListener
+                }else if (titleNoteEdtTxt.text.length < 3){
+                    //
+                    requireActivity().snackBar(
+                        R.color.holo_blue_dark,
+                        getString(R.string.empty_title_of_note_error),dialog?.window?.decorView
                     )
                     return@setOnClickListener
                 }
@@ -149,7 +150,6 @@ class AddEditNoteFragment : BottomSheetDialogFragment() {
             arguments?.let {
                 val id = it.getInt(ARG_ID_NOTE_UPDATE, -1)
 
-                Log.e(TAG, "onClickAdapters: $id")
                 if (id == -1) return
                 viewModel.getNoteRelatedById(id)
                 viewModel.noteLiveData.observe(viewLifecycleOwner) { response ->
@@ -215,13 +215,13 @@ class AddEditNoteFragment : BottomSheetDialogFragment() {
     private fun getCurrentDate(): String {
         val pdate = PersianDate()
         val pdformater1 = PersianDateFormat("Y/m/d")
-        return pdformater1.format(pdate) //1396/05/20
+        return pdformater1.format(pdate).englishToIranianNumber() //1396/05/20
     }
 
     private fun getCurrentTime(): String {
         val pdate = PersianDate()
         val pdformater1 = PersianDateFormat("H:i")
-        return pdformater1.format(pdate) //01:10
+        return pdformater1.format(pdate).englishToIranianNumber() //01:10
     }
 
     override fun onDestroy() {

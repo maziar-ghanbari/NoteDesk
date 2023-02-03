@@ -1,13 +1,11 @@
 package ghanbari.maziar.notedesk.data.repository
 
-import android.util.Log
 import ghanbari.maziar.notedesk.data.local.FolderDao
 import ghanbari.maziar.notedesk.data.local.NoteDao
 import ghanbari.maziar.notedesk.data.model.FolderEntity
 import ghanbari.maziar.notedesk.data.model.NoteAndFolder
 import ghanbari.maziar.notedesk.data.model.NoteEntity
 import ghanbari.maziar.notedesk.utils.MyResponse
-import ghanbari.maziar.notedesk.utils.TAG
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow

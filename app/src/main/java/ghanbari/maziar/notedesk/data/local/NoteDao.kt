@@ -15,18 +15,15 @@ import kotlinx.coroutines.flow.Flow
 @Dao
 interface NoteDao {
 
-    @Query("SELECT * FROM $NOTE_TABLE_NAME")
-    fun getAllNotes(): Flow<MutableList<NoteEntity>>
-
-    @Query("SELECT * FROM $NOTE_TABLE_NAME WHERE :id = $NOTE_ID")
-    fun getNoteById(id: Int): Flow<MutableList<NoteEntity>>
-
     @Transaction
-    @Query("SELECT $NOTE_TABLE_NAME.* ,$FOLDERS_TABLE_NAME.* FROM $NOTE_TABLE_NAME INNER JOIN $FOLDERS_TABLE_NAME ON $NOTE_FOLDER_ID = $FOLDER_ID")
+    @Query("SELECT $NOTE_TABLE_NAME.* ,$FOLDERS_TABLE_NAME.* FROM $NOTE_TABLE_NAME " +
+            "INNER JOIN $FOLDERS_TABLE_NAME ON $NOTE_FOLDER_ID = $FOLDER_ID " +
+            "ORDER BY note_is_pinned DESC")
     fun getAllNotesRelated(): Flow<MutableList<NoteAndFolder>>
 
     @Transaction
-    @Query("SELECT $NOTE_TABLE_NAME.* ,$FOLDERS_TABLE_NAME.* FROM $NOTE_TABLE_NAME INNER JOIN $FOLDERS_TABLE_NAME ON $NOTE_FOLDER_ID = $FOLDER_ID AND $NOTE_ID = :id")
+    @Query("SELECT $NOTE_TABLE_NAME.* ,$FOLDERS_TABLE_NAME.* FROM $NOTE_TABLE_NAME " +
+            "INNER JOIN $FOLDERS_TABLE_NAME ON $NOTE_FOLDER_ID = $FOLDER_ID AND $NOTE_ID = :id")
     fun getNoteRelatedById(id: Int): Flow<MutableList<NoteAndFolder>>
 
     @Update(onConflict = OnConflictStrategy.REPLACE)

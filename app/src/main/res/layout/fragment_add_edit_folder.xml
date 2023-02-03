@@ -54,13 +54,17 @@
         android:layout_width="@dimen/_50mdp"
         android:layout_height="@dimen/_50mdp"
         android:background="#00FFFFFF"
+        android:overlapAnchor="false"
+        android:dropDownVerticalOffset="-1dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@id/folder_title_edt"
         app:layout_constraintBottom_toBottomOf="@id/folder_title_edt"/>
     <!--save-->
-    <Button
+    <com.google.android.material.button.MaterialButton
         android:id="@+id/add_folder_new_btn"
         android:text="@string/saveNewFolder"
+        android:textColor="@color/white"
+        app:backgroundTint="@color/purple_500"
         android:layout_marginTop="@dimen/_15mdp"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:title="@string/share_note"
+        android:id="@+id/share_note_show_content"/>
+
+    <item android:id="@+id/copy_note_show_content"
+        android:title="@string/copy_note_to_clipboard"/>
+
+    <item android:id="@+id/delete_note_show_content"
+        android:title="@string/note_delete"/>
+
+</menu>

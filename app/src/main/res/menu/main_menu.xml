@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/search_by_date_menu"
+        android:title="@string/search_by_date_menu" />
+    <item
+        android:id="@+id/export_all_to_phone"
+        android:title="@string/export_to_phone_menu" />
+    <item
+        android:id="@+id/about_us_menu"
+        android:title="@string/about_us_menu" />
+</menu>

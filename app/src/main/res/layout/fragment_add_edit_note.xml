@@ -100,6 +100,7 @@
         android:id="@+id/title_note_edtTxt"/>
     <!--des editText-->
     <EditText
+        android:maxLength="2000"
         android:layout_marginTop="@dimen/_6mdp"
         android:layout_width="0dp"
         android:layout_height="@dimen/_205mdp"
@@ -116,7 +117,8 @@
         android:scrollbars="vertical"
         android:inputType="textMultiLine"
         android:id="@+id/des_note_edtTxt"
-        android:textSize="@dimen/_15font_mdp" />
+        android:textSize="@dimen/_15font_mdp"
+        android:nestedScrollingEnabled="true"/>
     <!--Title Of Folders-->
     <TextView
         android:layout_width="wrap_content"

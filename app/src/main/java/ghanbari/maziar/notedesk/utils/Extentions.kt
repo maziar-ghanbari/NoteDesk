@@ -1,7 +1,10 @@
 package ghanbari.maziar.notedesk.utils
 
 import android.app.Activity
+import android.app.NotificationChannel
+import android.app.NotificationManager
 import android.content.Context
+import android.os.Build
 import android.util.Log
 import android.view.Gravity
 import android.view.View
@@ -11,16 +14,15 @@ import android.widget.FrameLayout
 import android.widget.Spinner
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
-import androidx.coordinatorlayout.widget.CoordinatorLayout
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.LayoutManager
-import com.google.android.material.snackbar.BaseTransientBottomBar
 import com.google.android.material.snackbar.Snackbar
 import ghanbari.maziar.notedesk.R
 import ghanbari.maziar.notedesk.data.model.FolderEntity
 import ghanbari.maziar.notedesk.data.model.NoteAndFolder
-import javax.inject.Inject
 
 fun RecyclerView.init(adapter: RecyclerView.Adapter<*>, layoutManager: LayoutManager) {
     this.adapter = adapter
@@ -42,13 +44,15 @@ fun View.isShown(visible: Boolean, isInVisible: Boolean = false) {
 //open keyboard
 fun View.showKeyboard() {
     this.requestFocus()
-    val inputMethodManager = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+    val inputMethodManager =
+        context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
     inputMethodManager.showSoftInput(this, InputMethodManager.SHOW_IMPLICIT)
 }
 
 //close keyboard
 fun View.hideKeyboard() {
-    val inputMethodManager = context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+    val inputMethodManager =
+        context.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
     inputMethodManager.hideSoftInputFromWindow(windowToken, 0)
 }
 
@@ -121,6 +125,7 @@ fun MutableList<NoteAndFolder>.orderByPinSearch(): MutableList<NoteAndFolder> {
 fun MutableList<NoteAndFolder>.byDateSearch(date: String): MutableList<NoteAndFolder> {
     val result = mutableListOf<NoteAndFolder>()
     this.forEach {
+        Log.e(TAG, "byDateSearch:$date " + it.note.date)
         if (it.note.date.contains(date, true)) {
             result.add(it)
         }
@@ -201,8 +206,15 @@ fun Spinner.setUpIconSpinner(icons: MutableList<Int>, callback: (Int) -> Unit) {
 }
 
 //snackBar
-fun Activity.snackBar(colorBackground : Int,message : String){
-    val mySnack = Snackbar.make(this.findViewById(android.R.id.content), message, Snackbar.LENGTH_SHORT)
+fun Activity.snackBar(colorBackground: Int, message: String, view: View? = null) {
+
+    //this.findViewById(android.R.id.content)
+    //show default view but in bottomSheet or dialog use their view
+    val mySnack = Snackbar.make(
+        view ?: this.findViewById(android.R.id.content),
+        message,
+        Snackbar.LENGTH_SHORT
+    )
 
     //set background
     mySnack.setBackgroundTint(ContextCompat.getColor(this, colorBackground))
@@ -217,28 +229,96 @@ fun Activity.snackBar(colorBackground : Int,message : String){
     //wrap content size
     //gravity center
     params.width = FrameLayout.LayoutParams.WRAP_CONTENT
-    params.gravity = Gravity.CENTER_HORIZONTAL
+    params.gravity = if (view == null) Gravity.CENTER_HORIZONTAL else Gravity.CENTER
     mySnack.view.layoutParams = params
 
     //icon
-    val textView = mySnack.view.findViewById(com.google.android.material.R.id.snackbar_text) as TextView
+    val textView =
+        mySnack.view.findViewById(com.google.android.material.R.id.snackbar_text) as TextView
     textView.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_baseline_info_24, 0, 0, 0)
-    textView.compoundDrawablePadding = resources.getDimensionPixelOffset(`in`.nouri.dynamicsizeslib.R.dimen._3mdp)
+    textView.compoundDrawablePadding =
+        resources.getDimensionPixelOffset(`in`.nouri.dynamicsizeslib.R.dimen._3mdp)
 
-    //set behavior
-    mySnack.behavior = object : BaseTransientBottomBar.Behavior(){
-        //TODO set snackbar behavior for dialogs interactive
-    }
 
     mySnack.show()
 }
+
 //alert dialog
-fun Activity.alertDialog(title :String,message :String ,yes : (() -> Unit)){
+fun Activity.alertDialog(title: String, message: String, yes: (() -> Unit)) {
     AlertDialog.Builder(this)
         .setTitle(title)
         .setMessage(message)
-        .setPositiveButton("بله"){_,_->
+        .setPositiveButton("بله") { _, _ ->
             yes()
-        }.setNegativeButton("خیر"){_,_->
+        }.setNegativeButton("خیر") { _, _ ->
         }.create().show()
+}
+
+//create notification
+fun Activity.notificationCreation(title: String, des: String, img: Int, notificationId: Int) {
+    val builder = NotificationCompat.Builder(this, CHANNEL_ID)
+        .setSmallIcon(img)
+        .setContentTitle(title)
+        .setContentText(des)
+        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+
+    // Create the NotificationChannel, but only on API 26+ because
+    // the NotificationChannel class is new and not in the support library
+    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+        val name = getString(R.string.channel_name)
+        val descriptionText = getString(R.string.channel_description)
+        val importance = NotificationManager.IMPORTANCE_DEFAULT
+        val channel = NotificationChannel(CHANNEL_ID, name, importance).apply {
+            description = descriptionText
+        }
+        // Register the channel with the system
+        val notificationManager: NotificationManager =
+            getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.createNotificationChannel(channel)
+    }
+    with(NotificationManagerCompat.from(this)) {
+        // notificationId is a unique int for each notification that you must define
+        notify(notificationId, builder.build())
+    }
+}
+
+//english number to iranian number
+fun String.englishToIranianNumber(): String {
+    var result = ""
+    var ir = '۰'
+    for (ch in this) {
+        ir = ch
+        when (ch) {
+            '0' -> ir = '۰'
+            '1' -> ir = '۱'
+            '2' -> ir = '۲'
+            '3' -> ir = '۳'
+            '4' -> ir = '۴'
+            '5' -> ir = '۵'
+            '6' -> ir = '۶'
+            '7' -> ir = '۷'
+            '8' -> ir = '۸'
+            '9' -> ir = '۹'
+        }
+        result = "${result}$ir"
+    }
+    return result
+    //copy right of this extention function: Alireza_Barakati in stackOverFlow
+}
+
+//file naming rule
+fun String.convertByPolicyNoteDeskFileNaming(): String {
+    val c = this.toCharArray().toMutableList()
+    for (i in 0 until c.size) {
+        c[i] = if (c[i] in ('a'..'z') || c[i] in ('A'..'A') || c[i] in ('ا'..'ی') || c[i] in ('0'..'9')) {
+            c[i]
+        } else {
+            '\u200C'
+        }
+    }
+    var result = ""
+    c.forEach {
+        result += it
+    }
+    return result
 }

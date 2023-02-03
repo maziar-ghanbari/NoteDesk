@@ -1,12 +1,11 @@
 package ghanbari.maziar.notedesk.ui.main
 
 
+import android.graphics.Color
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
@@ -15,12 +14,17 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import dagger.hilt.android.AndroidEntryPoint
 import ghanbari.maziar.notedesk.R
 import ghanbari.maziar.notedesk.databinding.FragmentMainBinding
+import ghanbari.maziar.notedesk.ui.MainActivity
 import ghanbari.maziar.notedesk.ui.main.adapters.FolderAdapter
 import ghanbari.maziar.notedesk.ui.main.adapters.NoteAdapter
 import ghanbari.maziar.notedesk.ui.main.pages.addEditFolder.AddEditFolderFragment
 import ghanbari.maziar.notedesk.ui.main.pages.addEditNote.AddEditNoteFragment
+import ghanbari.maziar.notedesk.ui.main.pages.noteContentShow.NoteContentFragment
 import ghanbari.maziar.notedesk.utils.*
 import ghanbari.maziar.notedesk.viewModel.MainViewModel
+import ir.hamsaa.persiandatepicker.PersianDatePickerDialog
+import ir.hamsaa.persiandatepicker.api.PersianPickerDate
+import ir.hamsaa.persiandatepicker.api.PersianPickerListener
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -44,6 +48,9 @@ class MainFragment : Fragment() {
     @Inject
     lateinit var noteAdapter: NoteAdapter
 
+    @Inject
+    lateinit var filesExporter: FilesExporter
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -56,7 +63,9 @@ class MainFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         binding?.apply {
             //toolbar as action bar
-            (activity as AppCompatActivity).setSupportActionBar(binding?.toolbar)
+            //(activity as AppCompatActivity).setSupportActionBar(binding?.toolbar)
+            //on option click
+            toolbarOnOptionsClickListener()
             //open close searchBox ConstrainSet
             searchMenuTxt.setOnClickListener {
                 when (openCloseAnimState) {
@@ -171,6 +180,8 @@ class MainFragment : Fragment() {
                                 )
                             )
                         }
+
+
                     }
                     MyResponse.DataState.EMPTY -> {
                         notesListEmpty.showBut(notesListProgress, notesListRecycler)
@@ -194,7 +205,7 @@ class MainFragment : Fragment() {
                     } else {
                         //send selected priority as by operator in viewModel to receive note in related
                         viewModel._operatorNotesStateFlow.emit(NoteOperator.getByPrioritySearch(it.name))
-                        withContext(Dispatchers.Main){
+                        withContext(Dispatchers.Main) {
                             requireActivity().snackBar(
                                 R.color.holo_green_dark,
                                 "نمایش بر اساس ${it.name}"
@@ -203,6 +214,7 @@ class MainFragment : Fragment() {
                     }
                 }
             }
+
             //*** menus
             //add new note
             addMenuTxt.setOnClickListener {
@@ -215,13 +227,117 @@ class MainFragment : Fragment() {
                 }
             }
         }
+
+        //check permission observable
+        (requireActivity() as MainActivity).isPermissionGrantedLiveData.observe(viewLifecycleOwner) { isGranted ->
+            if (isGranted) {
+                //export files
+
+                //get last version of notes from database dataStream
+                val noteValue = viewModel.databaseNotesStateFlow.value
+                //if their are exist export them to external storage as .txt file
+                if (noteValue.state == MyResponse.DataState.SUCCESS){
+                    val note = noteValue.data
+                    note?.let { noteAndFolder ->
+                        lifecycleScope.launch(Dispatchers.Main) {
+                            val message = filesExporter.exportAllNotes(noteAndFolder)
+                            requireActivity().snackBar(R.color.holo_blue_dark,message)
+                        }
+                    }
+                }
+
+            } else {
+                //permission is denied
+                requireActivity().snackBar(R.color.holo_blue_dark,getString(R.string.permission_denied))
+            }
+        }
+    }
+
+
+    //click on options of toolbars
+    private fun toolbarOnOptionsClickListener() {
+        binding?.apply {
+            toolbar.setOnMenuItemClickListener {
+                when (it.itemId) {
+                    R.id.export_all_to_phone -> {
+                        //export all notes
+                        (requireActivity() as MainActivity).methodRequiresTwoPermission()
+                    }
+                    R.id.search_by_date_menu -> {
+                        //search note by date
+                        datePicker()
+                    }
+                    R.id.about_us_menu -> {
+                        requireActivity().snackBar(R.color.holo_green_dark,"سازنده : مازیار قنبری")
+                    }
+                }
+                return@setOnMenuItemClickListener true
+            }
+        }
+    }
+
+    //date picker
+    private fun datePicker() {
+        //use coroutine for avoid blocking ui main
+        lifecycleScope.launch(Dispatchers.IO) {
+            val picker = PersianDatePickerDialog(requireContext())
+                .setPositiveButtonString("گُزیدن")
+                .setNegativeButton("لغو")
+                .setTodayButton("برو به امروز")
+                .setTodayButtonVisible(true)
+                .setMinYear(1300)
+                .setMaxYear(PersianDatePickerDialog.THIS_YEAR)
+                .setMaxMonth(PersianDatePickerDialog.THIS_MONTH)
+                .setMaxDay(PersianDatePickerDialog.THIS_DAY)
+                .setActionTextColor(Color.DKGRAY)
+                .setTitleType(PersianDatePickerDialog.WEEKDAY_DAY_MONTH_YEAR)
+                .setShowInBottomSheet(true)
+                .setListener(object : PersianPickerListener {
+                    override fun onDateSelected(persianPickerDate: PersianPickerDate) {
+                        with(persianPickerDate) {
+                            //standardizing date
+                            val year = persianYear.toString()
+                            val month =
+                                if (persianMonth.toString().length == 1) "0$persianMonth" else persianMonth.toString()
+                            val day =
+                                if (persianDay.toString().length == 1) "0$persianDay" else persianDay.toString()
+                            //convert to iranian number
+                            val date = "$year/$month/$day".englishToIranianNumber()
+                            //show message
+                            requireActivity().snackBar(
+                                R.color.holo_green_dark,
+                                "نمایش یادداشت ها بر اساس تاریخ $date"
+                            )
+                            //send operator filter by date selected
+                            lifecycleScope.launch(Dispatchers.IO) {
+                                viewModel._operatorNotesStateFlow.emit(
+                                    NoteOperator.getByDateSearch(
+                                        date
+                                    )
+                                )
+                            }
+                        }
+                    }
+
+                    override fun onDismissed() {}
+                })
+            withContext(Dispatchers.Main) { picker.show() }
+        }
     }
 
     //onClick in adapters items
     private fun onClickAdapters() {
         //note item click
         noteAdapter.setOnItemClickListener {
-            //viewModel.deleteNote(it)
+            //open note content fragment
+            val noteContentFragment = NoteContentFragment()
+            val bundle = Bundle()
+            bundle.putInt(ARG_ID_NOTE_SHOW, it.note.id)
+            noteContentFragment.arguments = bundle
+            noteContentFragment.show(
+                requireActivity().supportFragmentManager,
+                noteContentFragment.tag
+            )
         }
         //edit notes item click
         noteAdapter.setOnEditClickListener {
@@ -243,7 +359,7 @@ class MainFragment : Fragment() {
                             val folderEditAdd = AddEditFolderFragment()
                             folderEditAdd.show(act.supportFragmentManager, folderEditAdd.tag)
                         }
-                    }else{
+                    } else {
                         //error max of number of folders
                         requireActivity().snackBar(
                             R.color.holo_red_dark,
@@ -282,7 +398,7 @@ class MainFragment : Fragment() {
                     activity?.let { act ->
                         val folderEditAdd = AddEditFolderFragment()
                         val bundle = Bundle()
-                        Log.e(TAG, "onClickAdapters: ${folder.title} ${folder.id} ${folder.img}")
+
                         bundle.putInt(ARG_ID_FOLDER_UPDATE, folder.id)
                         bundle.putString(ARG_TITLE_FOLDER_UPDATE, folder.title)
                         bundle.putInt(ARG_ICON_FOLDER_UPDATE, folder.img)
@@ -295,7 +411,7 @@ class MainFragment : Fragment() {
                     requireActivity().alertDialog(
                         getString(R.string.delete_folder_title),
                         "آیا از حذف پوشه (${folder.title}) مطمئنید؟"
-                    ){
+                    ) {
                         requireActivity().snackBar(
                             R.color.holo_green_dark,
                             getString(R.string.delete_folder_successfully)

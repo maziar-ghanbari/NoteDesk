@@ -51,7 +51,7 @@ class NoteAdapter @Inject constructor(@ApplicationContext private val context: C
                 }
                 //on item click listener
                 itemNoteCardBody.setOnClickListener {
-                    // onItemClickListener?.let { item -> item(note) }
+                    onItemClickListener?.let { item -> item(noteAndFolder) }
                 }
                 itemNotePriorityColor.setOnClickListener {
                     onItemClickListener?.let { item -> item(noteAndFolder) }

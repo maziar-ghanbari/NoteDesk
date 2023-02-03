@@ -34,7 +34,29 @@
     <string name="exit_app_title">خروج از برنامه</string>
     <string name="exit_app_message">آیا میخواهید از برنامه خارج شوید؟</string>
     <string name="max_of_number_of_folder_error">به سقف تعداد پوشه ها رسیدید!</string>
-    <string name="empty_title_of_folder_error">نام پوشه نمی تواند تهی باشد!</string>
+    <string name="empty_title_of_folder_error">نام پوشه نمی تواند کمتر سه نویسه باشد!</string>
+    <string name="empty_title_of_note_error">جُستار یادداشت نمی تواند کمتر سه نویسه باشد!</string>
+    <string name="note_not_found_error">یادداشت پیدا نشد!!!</string>
     <!--filtering-->
     <string name="note_filter_by_all_folder">نمایش همه یادداشت ها!</string>
+    <string name="submit_notification_note">ثبت اعلان</string>
+    <string name="export_note_to_phone">صدور در حافظه</string>
+    <string name="share_note">به اشتراک گذاری</string>
+    <string name="copy_note_to_clipboard">پچین برداری</string>
+
+    <!--channel notification-->
+    <string name="channel_name">یادداشت ها</string>
+    <string name="channel_description">برای تنظیم برخی یادداشت ها به صورت اعلان</string>
+
+    <string name="copy_note_to_clipboard_successfully">یادداشت در clipboard ذخیره شد!</string>
+    <string name="show_note_order_by_pin_menu">اولویت نمایش با سنجاق ها</string>
+    <string name="search_by_date_menu">جستجو براساس تاریخ</string>
+    <string name="export_to_phone_menu">صدور همه در حافظه گوشی</string>
+    <string name="about_us_menu">درباره ما</string>
+
+    <string name="permission_required">برای صدور پرونده ها در حافظه گوشی نیاز به مجوز است.</string>
+    <string name="ok">تایید</string>
+    <string name="permission_granted">مجوز برای صدور پرونده ها در حافظه گوشی صادر شد.</string>
+    <string name="permission_denied">مجوز را در تنظیمات فعال کنید.</string>
+
 </resources>
