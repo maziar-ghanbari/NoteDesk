@@ -6,12 +6,9 @@ import android.util.Log
 import dagger.hilt.android.qualifiers.ApplicationContext
 import ghanbari.maziar.notedesk.R
 import ghanbari.maziar.notedesk.data.model.NoteAndFolder
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Dispatchers.IO
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.withContext
 import java.io.File
-import java.io.FileOutputStream
 import javax.inject.Inject
 import javax.inject.Singleton
 

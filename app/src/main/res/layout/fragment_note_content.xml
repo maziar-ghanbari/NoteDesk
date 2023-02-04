@@ -38,17 +38,14 @@
 
     <!--menu-->
     <ImageView
-        android:contentDescription="@string/note_delete"
         android:id="@+id/menu_option_show_note_img"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        app:layout_constraintDimensionRatio="1:1"
-        android:padding="@dimen/_8mdp"
+        android:layout_width="@dimen/_40mdp"
+        android:layout_height="@dimen/_40mdp"
+        android:padding="@dimen/_10mdp"
         android:src="@drawable/ic_twotone_more_vert_24"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
-        app:layout_constraintBottom_toBottomOf="@id/submit_notification_note"
-        app:layout_constraintTop_toTopOf="@id/submit_notification_note"
+        app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toEndOf="@+id/submit_notification_note"
         app:tint="@color/black"/>
 

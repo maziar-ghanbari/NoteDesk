@@ -17,7 +17,6 @@ import dagger.hilt.android.AndroidEntryPoint
 import ghanbari.maziar.notedesk.R
 import ghanbari.maziar.notedesk.data.model.NoteAndFolder
 import ghanbari.maziar.notedesk.databinding.FragmentNoteContentBinding
-import ghanbari.maziar.notedesk.ui.MainActivity
 import ghanbari.maziar.notedesk.utils.*
 import ghanbari.maziar.notedesk.viewModel.NoteContentViewModel
 import kotlinx.coroutines.Dispatchers
@@ -135,7 +134,7 @@ class NoteContentFragment : BottomSheetDialogFragment() {
             }
             //set menu
             menuOptionShowNoteImg.setOnClickListener {
-                menuPopup(noteAndFolder)
+                menuPopup(it, noteAndFolder)
             }
             //set note as a notification
             submitNotificationNote.setOnClickListener {
@@ -156,73 +155,71 @@ class NoteContentFragment : BottomSheetDialogFragment() {
     }
 
     //init menu
-    private fun menuPopup(noteAndFolder: NoteAndFolder) {
+    private fun menuPopup(it: View, noteAndFolder: NoteAndFolder) {
         binding?.apply {
-            menuOptionShowNoteImg.setOnClickListener {
-                val popupMenu = PopupMenu(context, it as ImageView)
-                popupMenu.menuInflater.inflate(R.menu.note_show_menu_option, popupMenu.menu)
-                popupMenu.show()
-                //Select
-                popupMenu.setOnMenuItemClickListener { menuItem ->
-                    when (menuItem.itemId) {
+            val popupMenu = PopupMenu(context, it as ImageView)
+            popupMenu.menuInflater.inflate(R.menu.note_show_menu_option, popupMenu.menu)
+            popupMenu.show()
+            //Select
+            popupMenu.setOnMenuItemClickListener { menuItem ->
+                when (menuItem.itemId) {
+                    //share note
+                    R.id.share_note_show_content -> {
                         //share note
-                        R.id.share_note_show_content -> {
-                            //share note
-                            Intent(Intent.ACTION_SEND).also { intent ->
+                        Intent(Intent.ACTION_SEND).also { intent ->
 
-                                //share note content
-                                intent.type = "text/plain"
-                                intent.putExtra(
-                                    Intent.EXTRA_SUBJECT,
-                                    noteAndFolder.note.title
+                            //share note content
+                            intent.type = "text/plain"
+                            intent.putExtra(
+                                Intent.EXTRA_SUBJECT,
+                                noteAndFolder.note.title
+                            )
+                            intent.putExtra(Intent.EXTRA_TEXT, noteAndFolder.toString())
+                            startActivity(
+                                Intent.createChooser(
+                                    intent,
+                                    getString(R.string.share_note)
                                 )
-                                intent.putExtra(Intent.EXTRA_TEXT, noteAndFolder.toString())
-                                startActivity(
-                                    Intent.createChooser(
-                                        intent,
-                                        getString(R.string.share_note)
-                                    )
-                                )
-                            }
+                            )
                         }
-                        //copy note
-                        R.id.copy_note_show_content -> {
-                            lifecycleScope.launch(Dispatchers.IO) {
-                                //copy note to clip board
-                                val clipData = ClipData.newPlainText(
-                                    noteAndFolder.note.title,
-                                    noteAndFolder.toString()
-                                )
-                                clipboardManager.setPrimaryClip(clipData)
-                                withContext(Dispatchers.Main) {
-                                    //message : note successfully copied to clipboard
-                                    requireActivity().snackBar(
-                                        R.color.holo_green_dark,
-                                        requireActivity().getString(R.string.copy_note_to_clipboard_successfully),
-                                        dialog?.window?.decorView
-                                    )
-                                }
-                            }
-                        }
-                        //delete note
-                        R.id.delete_note_show_content -> {
-                            //delete note show alert dialog
-                            val note = noteAndFolder.note
-                            requireActivity().alertDialog(
-                                getString(R.string.delete_note_title),
-                                "آیا از حذف یادداشت (${note.title}) مطمئنید؟"
-                            ) {
+                    }
+                    //copy note
+                    R.id.copy_note_show_content -> {
+                        lifecycleScope.launch(Dispatchers.IO) {
+                            //copy note to clip board
+                            val clipData = ClipData.newPlainText(
+                                noteAndFolder.note.title,
+                                noteAndFolder.toString()
+                            )
+                            clipboardManager.setPrimaryClip(clipData)
+                            withContext(Dispatchers.Main) {
+                                //message : note successfully copied to clipboard
                                 requireActivity().snackBar(
                                     R.color.holo_green_dark,
-                                    getString(R.string.delete_note_successfully)
+                                    requireActivity().getString(R.string.copy_note_to_clipboard_successfully),
+                                    dialog?.window?.decorView
                                 )
-                                viewModel.deleteNote(note)
-                                dismiss()
                             }
                         }
                     }
-                    return@setOnMenuItemClickListener true
+                    //delete note
+                    R.id.delete_note_show_content -> {
+                        //delete note show alert dialog
+                        val note = noteAndFolder.note
+                        requireActivity().alertDialog(
+                            getString(R.string.delete_note_title),
+                            "آیا از حذف یادداشت (${note.title}) مطمئنید؟"
+                        ) {
+                            requireActivity().snackBar(
+                                R.color.holo_green_dark,
+                                getString(R.string.delete_note_successfully)
+                            )
+                            viewModel.deleteNote(note)
+                            dismiss()
+                        }
+                    }
                 }
+                return@setOnMenuItemClickListener true
             }
         }
     }

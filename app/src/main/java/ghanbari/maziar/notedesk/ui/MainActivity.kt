@@ -1,25 +1,18 @@
 package ghanbari.maziar.notedesk.ui
 
 import android.Manifest
-import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import android.os.Environment
-import android.util.Log
 import androidx.activity.OnBackPressedCallback
-import androidx.activity.result.ActivityResultLauncher
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.MutableLiveData
 import androidx.navigation.fragment.NavHostFragment
 import dagger.hilt.android.AndroidEntryPoint
 import ghanbari.maziar.notedesk.R
 import ghanbari.maziar.notedesk.databinding.ActivityMainBinding
 import ghanbari.maziar.notedesk.utils.PERMISSION_REQUEST_CODE
-import ghanbari.maziar.notedesk.utils.TAG
 import ghanbari.maziar.notedesk.utils.alertDialog
 import pub.devrel.easypermissions.EasyPermissions
-import kotlin.math.min
 
 
 @AndroidEntryPoint

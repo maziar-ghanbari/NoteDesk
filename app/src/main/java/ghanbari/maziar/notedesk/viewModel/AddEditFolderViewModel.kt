@@ -1,14 +1,11 @@
 package ghanbari.maziar.notedesk.viewModel
 
-import android.content.Context
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import ghanbari.maziar.notedesk.R
 import ghanbari.maziar.notedesk.data.model.FolderEntity
-import ghanbari.maziar.notedesk.data.model.NoteEntity
 import ghanbari.maziar.notedesk.data.repository.AddEditFolderRepository
 import ghanbari.maziar.notedesk.utils.*
 import kotlinx.coroutines.Dispatchers.IO
