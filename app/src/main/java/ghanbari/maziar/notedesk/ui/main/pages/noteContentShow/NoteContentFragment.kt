@@ -3,7 +3,10 @@ package ghanbari.maziar.notedesk.ui.main.pages.noteContentShow
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Intent
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,6 +20,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import ghanbari.maziar.notedesk.R
 import ghanbari.maziar.notedesk.data.model.NoteAndFolder
 import ghanbari.maziar.notedesk.databinding.FragmentNoteContentBinding
+import ghanbari.maziar.notedesk.ui.MainActivity
 import ghanbari.maziar.notedesk.utils.*
 import ghanbari.maziar.notedesk.viewModel.NoteContentViewModel
 import kotlinx.coroutines.Dispatchers
@@ -83,6 +87,7 @@ class NoteContentFragment : BottomSheetDialogFragment() {
         }
     }
 
+    //this fun called when note collected successfuly
     private fun setNoteDataToView(noteAndFolder: NoteAndFolder) {
         binding?.apply {
             noteAndFolder.note.also {
@@ -139,7 +144,8 @@ class NoteContentFragment : BottomSheetDialogFragment() {
             //set note as a notification
             submitNotificationNote.setOnClickListener {
                 noteAndFolder.also {
-                    requireActivity().notificationCreation(
+                    //create notification
+                    (requireActivity() as MainActivity).initNotification(
                         //title
                         it.note.title,
                         //des
@@ -149,6 +155,43 @@ class NoteContentFragment : BottomSheetDialogFragment() {
                         //id
                         it.note.id
                     )
+                }
+            }
+            //for api 33 and higher need to check permission for notification
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                //is notification permission granted livedata
+                (requireActivity() as MainActivity).isNotificationPermGrantedLiveData.observe(
+                    viewLifecycleOwner
+                ) { isGranted ->
+                    if (isGranted) {
+                        noteAndFolder.also {
+                            (requireActivity() as MainActivity).initNotification(
+                                //title
+                                it.note.title,
+                                //des
+                                it.note.des,
+                                //icon
+                                it.folder.img,
+                                //id
+                                it.note.id
+                            )
+                        }
+                    } else {
+                        //snackBar when notification denied
+                        requireActivity().snackBar(
+                            R.color.holo_blue_dark,
+                            getString(R.string.notification_permission_denied),
+                            dialog?.window?.decorView
+                        ) {
+                            //open Setting to get permission
+                            Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).also { intent ->
+                                val uri =
+                                    Uri.fromParts("package", requireActivity().packageName, null)
+                                intent.data = uri
+                                requireActivity().startActivity(intent)
+                            }
+                        }
+                    }
                 }
             }
         }

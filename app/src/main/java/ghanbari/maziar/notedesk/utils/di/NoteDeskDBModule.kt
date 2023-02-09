@@ -65,12 +65,6 @@ object NoteDeskDBModule {
                                 title = "آموزش"
                             )
                         )
-                        database.folderDao().insertFolder(
-                            FolderEntity(
-                                img = R.drawable.ic_baseline_shopping_cart_folderation_24,
-                                title = "خرید"
-                            )
-                        )
                     }
                 }
             })

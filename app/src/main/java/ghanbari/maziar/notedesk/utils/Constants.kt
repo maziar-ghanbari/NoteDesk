@@ -21,7 +21,8 @@ const val NOTE_IS_PINNED = "note_is_pinned"
 
 //data store
 const val DATA_STORE = "data_store"
-const val IS_FIRST_LAUNCH_DATA_STORE = "is_first_launch_data_store"
+const val DATA_STORE_TITLE_NOTE = "data_store_title_note"
+const val DATA_STORE_DES_NOTE = "data_store_des_note"
 //log
 const val TAG = "tagetag3"
 enum class PriorityNote(){
@@ -53,4 +54,8 @@ enum class SearchFolderAnimState(){
 //notification channel
 const val CHANNEL_ID = "channel_id"
 //permission request code
-const val PERMISSION_REQUEST_CODE = 1021
+const val NOTIFICATION_PERMISSION_RC = 1022
+//API >= 30
+const val STORAGE_PERMISSIONS_RC_1 = 1023
+//API < 30 & API > M
+const val STORAGE_PERMISSIONS_RC_2 = 1024

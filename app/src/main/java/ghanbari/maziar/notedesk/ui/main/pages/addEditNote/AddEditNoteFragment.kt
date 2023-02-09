@@ -4,8 +4,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.core.widget.addTextChangedListener
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.lifecycleScope
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import dagger.hilt.android.AndroidEntryPoint
 import ghanbari.maziar.notedesk.R
@@ -14,8 +16,12 @@ import ghanbari.maziar.notedesk.data.model.NoteEntity
 import ghanbari.maziar.notedesk.databinding.FragmentAddEditNoteBinding
 import ghanbari.maziar.notedesk.utils.*
 import ghanbari.maziar.notedesk.viewModel.AddEditNoteViewModel
+import kotlinx.coroutines.Dispatchers.IO
+import kotlinx.coroutines.flow.take
+import kotlinx.coroutines.launch
 import saman.zamani.persiandate.PersianDate
 import saman.zamani.persiandate.PersianDateFormat
+import javax.inject.Inject
 
 
 @AndroidEntryPoint
@@ -28,6 +34,9 @@ class AddEditNoteFragment : BottomSheetDialogFragment() {
     private var note = NoteEntity()
     private var oldFolderLiveData = MutableLiveData<FolderEntity>()
 
+
+    @Inject
+    lateinit var dataStore: MyDataStore
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -64,7 +73,7 @@ class AddEditNoteFragment : BottomSheetDialogFragment() {
                         }
                         //select old folder
                         oldFolderLiveData.observe(viewLifecycleOwner) { oldFolderSelected ->
-                            i@for (i in data) {
+                            i@ for (i in data) {
                                 if (i.id == oldFolderSelected.id) {
                                     val index = data.indexOf(i)
                                     folderSelectionSpinner.setSelection(index)
@@ -93,7 +102,7 @@ class AddEditNoteFragment : BottomSheetDialogFragment() {
                 requireActivity().alertDialog(
                     getString(R.string.delete_note_title),
                     "آیا از حذف یادداشت (${titleNoteEdtTxt.text}) مطمئنید؟"
-                ){
+                ) {
                     requireActivity().snackBar(
                         R.color.holo_green_dark,
                         getString(R.string.delete_note_successfully)
@@ -108,14 +117,14 @@ class AddEditNoteFragment : BottomSheetDialogFragment() {
                     //des & title can not be null
                     requireActivity().snackBar(
                         R.color.holo_blue_dark,
-                        getString(R.string.note_not_null_des_title),dialog?.window?.decorView
+                        getString(R.string.note_not_null_des_title), dialog?.window?.decorView
                     )
                     return@setOnClickListener
-                }else if (titleNoteEdtTxt.text.length < 3){
+                } else if (titleNoteEdtTxt.text.length < 3) {
                     //
                     requireActivity().snackBar(
                         R.color.holo_blue_dark,
-                        getString(R.string.empty_title_of_note_error),dialog?.window?.decorView
+                        getString(R.string.empty_title_of_note_error), dialog?.window?.decorView
                     )
                     return@setOnClickListener
                 }
@@ -138,6 +147,8 @@ class AddEditNoteFragment : BottomSheetDialogFragment() {
                         R.color.holo_green_dark,
                         getString(R.string.insert_note_successfully)
                     )
+                    //clear data store for stop reloading this content again
+                    clearDataStore()
                 }
 
                 dismiss()
@@ -146,11 +157,18 @@ class AddEditNoteFragment : BottomSheetDialogFragment() {
     }
 
     private fun checkArg() {
+        if (arguments == null || arguments?.getInt(ARG_ID_NOTE_UPDATE, -1) == -1){
+            //it is note for update
+            //set past data if it is not for update
+            reloadTitleAndDesIfIsNotUpdate()
+            return
+        }
         binding?.apply {
             arguments?.let {
                 val id = it.getInt(ARG_ID_NOTE_UPDATE, -1)
-
-                if (id == -1) return
+                if (id == -1) {
+                    return
+                }
                 viewModel.getNoteRelatedById(id)
                 viewModel.noteLiveData.observe(viewLifecycleOwner) { response ->
                     response.data?.get(0)?.let { noteUpdate ->
@@ -209,6 +227,43 @@ class AddEditNoteFragment : BottomSheetDialogFragment() {
                     }
                 }
             }
+        }
+    }
+
+    private fun reloadTitleAndDesIfIsNotUpdate() {
+        //it is not for update
+        binding?.apply {
+            lifecycleScope.launch {
+                dataStore.getNoteTitle().take(1).collect {
+                    titleNoteEdtTxt.setText(it)
+                }
+            }
+            lifecycleScope.launch {
+                //only one receive because of take
+                dataStore.getNoteDes().take(1).collect {
+                    desNoteEdtTxt.setText(it)
+                }
+            }
+
+            //save edt text title content lively
+            titleNoteEdtTxt.addTextChangedListener {
+                lifecycleScope.launch(IO) {
+                    dataStore.saveNoteTitle(it.toString())
+                }
+            }
+            //save edt text des content lively
+            desNoteEdtTxt.addTextChangedListener {
+                lifecycleScope.launch(IO) {
+                    dataStore.saveNoteDes(it.toString())
+                }
+            }
+        }
+    }
+
+    private fun clearDataStore() {
+        lifecycleScope.launch(IO) {
+            dataStore.saveNoteTitle("")
+            dataStore.saveNoteDes("")
         }
     }
 

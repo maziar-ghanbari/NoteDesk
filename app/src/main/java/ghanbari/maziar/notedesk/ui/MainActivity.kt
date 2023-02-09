@@ -1,22 +1,24 @@
 package ghanbari.maziar.notedesk.ui
 
 import android.Manifest
+import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.MutableLiveData
 import androidx.navigation.fragment.NavHostFragment
 import dagger.hilt.android.AndroidEntryPoint
 import ghanbari.maziar.notedesk.R
 import ghanbari.maziar.notedesk.databinding.ActivityMainBinding
-import ghanbari.maziar.notedesk.utils.PERMISSION_REQUEST_CODE
-import ghanbari.maziar.notedesk.utils.alertDialog
-import pub.devrel.easypermissions.EasyPermissions
+import ghanbari.maziar.notedesk.utils.*
 
 
 @AndroidEntryPoint
-class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
+class MainActivity : AppCompatActivity() {
 
     private lateinit var navHostFragment: NavHostFragment
     private var _binding: ActivityMainBinding? = null
@@ -46,8 +48,55 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
     }
 
 
-    //is permission granted or note
-    val isPermissionGrantedLiveData = MutableLiveData<Boolean>()
+    //init notification to show
+    fun initNotification(title: String, des: String, img: Int, notificationId: Int) {
+        //if permission is granted for sending notification
+        //api < 33 Or (api >= 33 And PermissionGranted)
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU ||
+            (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) == PackageManager.PERMISSION_GRANTED)
+        ) {
+            //show notification
+            showNotification(title, des, img, notificationId)
+        }
+        //api >= 33 And !PermissionGranted
+        //request permission or show message no permission
+        else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            //request permission by register activity for result to get permission
+            requestPermissions(
+                arrayOf(Manifest.permission.POST_NOTIFICATIONS),
+                NOTIFICATION_PERMISSION_RC
+            )
+        }
+    }
+
+    //is notification permission granted liveDada
+    val isNotificationPermGrantedLiveData = MutableLiveData<Boolean>()
+
+
+    //show notification straightly
+    private fun showNotification(title: String, des: String, img: Int, notificationId: Int) {
+        val builder = NotificationCompat.Builder(this, CHANNEL_ID)
+            .setSmallIcon(img)
+            .setContentTitle(title)
+            .setContentText(des)
+            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+
+
+        with(NotificationManagerCompat.from(this)) {
+            // notificationId is a unique int for each notification that you must define
+            notify(notificationId, builder.build())
+        }
+    }
+
+    //is storage permission granted or note
+    val isStoragePermissionGrantedLiveData = MutableLiveData<Boolean>()
 
 
     override fun onRequestPermissionsResult(
@@ -56,72 +105,76 @@ class MainActivity : AppCompatActivity(), EasyPermissions.PermissionCallbacks {
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
 
-        // Forward results to EasyPermissions
-        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this)
+        //check requests permissions
+        when (requestCode) {
+            NOTIFICATION_PERMISSION_RC -> {
+                isNotificationPermGrantedLiveData.value =
+                    (grantResults.isNotEmpty() && grantResults[0]
+                            == PackageManager.PERMISSION_GRANTED)
+            }
+            //check external storage permissions
+            STORAGE_PERMISSIONS_RC_1 -> {
+                isStoragePermissionGrantedLiveData.value =
+                    grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED
+            }
+            STORAGE_PERMISSIONS_RC_2 -> {
+                isStoragePermissionGrantedLiveData.value =
+                    grantResults.size > 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED
+                            && grantResults[1] == PackageManager.PERMISSION_GRANTED
 
+            }
+        }
     }
 
-
-    fun methodRequiresTwoPermission() {
-
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
-            isPermissionGrantedLiveData.postValue(true)
-            return
-        }
-
-        val perms = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            arrayOf(
-                Manifest.permission.READ_EXTERNAL_STORAGE,
-            )
-        }else {
-            arrayOf(
-                Manifest.permission.READ_EXTERNAL_STORAGE,
+    fun exportAllNotes() {
+        //if permission is ok
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M
+            || Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU
+            || (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R &&
+                    ContextCompat.checkSelfPermission(
+                        this,
+                        Manifest.permission.READ_EXTERNAL_STORAGE
+                    ) == PackageManager.PERMISSION_GRANTED)
+            || (ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.READ_EXTERNAL_STORAGE
+            ) == PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(
+                this,
                 Manifest.permission.WRITE_EXTERNAL_STORAGE
+            ) == PackageManager.PERMISSION_GRANTED)
+        ) {
+            isStoragePermissionGrantedLiveData.value = true
+        }
+        //if it is >= api 30 and need request
+        else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R &&
+            ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.READ_EXTERNAL_STORAGE
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            requestPermissions(
+                arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
+                STORAGE_PERMISSIONS_RC_1
             )
         }
-
-        if (EasyPermissions.hasPermissions(this, *perms)) {
-            // Already have permission, do the thing
-            isPermissionGrantedLiveData.postValue(true)
-        } else {
-            // Do not have permissions, request them now
-            EasyPermissions.requestPermissions(
-                this, getString(R.string.permission_required),
-                PERMISSION_REQUEST_CODE, *perms
+        //if api is in 23 and 29 and need request
+        else if (ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.READ_EXTERNAL_STORAGE
+            ) != PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            requestPermissions(
+                arrayOf(
+                    Manifest.permission.READ_EXTERNAL_STORAGE,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE
+                ),
+                STORAGE_PERMISSIONS_RC_2
             )
         }
-        /*
-        notice :
-        According to google documentation Starting in Android 11, apps cannot create
-        their own app-specific directory on external storage, and also the same thing
-        for creating files, so to fix this you can create the file in any other directory like
-        downloads directory
-        source : MoCoding - stackoverflow # it was useful for me in this project (maziar ghanbari)
-        */
     }
-
-
-    override fun onPermissionsGranted(requestCode: Int, perms: MutableList<String>) {
-        //permission granted for write to external storage
-        val requiredPerms = mutableListOf(
-            Manifest.permission.READ_EXTERNAL_STORAGE,
-            Manifest.permission.WRITE_EXTERNAL_STORAGE
-        )
-        if (requestCode == PERMISSION_REQUEST_CODE && Build.VERSION.SDK_INT >= Build.VERSION_CODES.R
-            && perms.contains(requiredPerms[0])) {
-            isPermissionGrantedLiveData.postValue(true)
-        }else if (requestCode == PERMISSION_REQUEST_CODE && perms.containsAll(requiredPerms)) {
-            isPermissionGrantedLiveData.postValue(true)
-        }else{
-            isPermissionGrantedLiveData.postValue(false)
-        }
-    }
-
-    override fun onPermissionsDenied(requestCode: Int, perms: MutableList<String>) {
-        //permission deniyed
-        isPermissionGrantedLiveData.postValue(false)
-    }
-
 
     override fun onDestroy() {
         super.onDestroy()

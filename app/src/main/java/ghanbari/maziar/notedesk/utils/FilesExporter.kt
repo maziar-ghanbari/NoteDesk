@@ -2,7 +2,6 @@ package ghanbari.maziar.notedesk.utils
 
 import android.content.Context
 import android.os.Environment
-import android.util.Log
 import dagger.hilt.android.qualifiers.ApplicationContext
 import ghanbari.maziar.notedesk.R
 import ghanbari.maziar.notedesk.data.model.NoteAndFolder
@@ -40,7 +39,6 @@ class FilesExporter @Inject constructor(@ApplicationContext private val context:
 
                 val folderName = noteAndFolder.folder.title
                 val folder = File("$directory/$folderName")
-                Log.e(TAG, "exportNote: ${folder.path}")
                 if (!folder.exists()) {
                     folder.mkdirs()
                 }

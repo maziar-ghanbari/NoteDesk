@@ -1,8 +1,11 @@
 package ghanbari.maziar.notedesk.ui.main
 
 
+import android.content.Intent
 import android.graphics.Color
+import android.net.Uri
 import android.os.Bundle
+import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -229,7 +232,7 @@ class MainFragment : Fragment() {
         }
 
         //check permission observable
-        (requireActivity() as MainActivity).isPermissionGrantedLiveData.observe(viewLifecycleOwner) { isGranted ->
+        (requireActivity() as MainActivity).isStoragePermissionGrantedLiveData.observe(viewLifecycleOwner) { isGranted ->
             if (isGranted) {
                 //export files
 
@@ -244,11 +247,20 @@ class MainFragment : Fragment() {
                             requireActivity().snackBar(R.color.holo_blue_dark,message)
                         }
                     }
+                }else if(noteValue.state == MyResponse.DataState.EMPTY){
+                    requireActivity().snackBar(R.color.holo_red_dark,getString(R.string.no_note_available))
                 }
-
             } else {
                 //permission is denied
-                requireActivity().snackBar(R.color.holo_blue_dark,getString(R.string.permission_denied))
+                requireActivity().snackBar(R.color.holo_blue_dark,getString(R.string.permission_denied)){
+                    //open Setting to get permission
+                    Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS).also { intent ->
+                        val uri =
+                            Uri.fromParts("package", requireActivity().packageName, null)
+                        intent.data = uri
+                        requireActivity().startActivity(intent)
+                    }
+                }
             }
         }
     }
@@ -261,7 +273,7 @@ class MainFragment : Fragment() {
                 when (it.itemId) {
                     R.id.export_all_to_phone -> {
                         //export all notes
-                        (requireActivity() as MainActivity).methodRequiresTwoPermission()
+                        (requireActivity() as MainActivity).exportAllNotes()
                     }
                     R.id.search_by_date_menu -> {
                         //search note by date

@@ -58,5 +58,7 @@
     <string name="ok">تایید</string>
     <string name="permission_granted">مجوز برای صدور پرونده ها در حافظه گوشی صادر شد.</string>
     <string name="permission_denied">مجوز را در تنظیمات فعال کنید.</string>
+    <string name="no_note_available">یادداشتی وجود ندارد!</string>
 
+    <string name="notification_permission_denied">شما مجوز فرستادن اعلانات را نداده اید, برای فعال کردن به تنظیمات بروید.</string>
 </resources>

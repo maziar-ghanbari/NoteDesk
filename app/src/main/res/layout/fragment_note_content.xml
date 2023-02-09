@@ -85,7 +85,7 @@
         android:layout_marginTop="@dimen/_10mdp"
         android:layout_width="match_parent"
         android:layout_marginHorizontal="@dimen/_5mdp"
-        android:layout_height="@dimen/_250mdp"
+        android:layout_height="@dimen/_210mdp"
         android:background="@drawable/note_show_txt_bg"
         app:layout_constraintTop_toBottomOf="@id/title_note_show_txt"
         app:layout_constraintStart_toStartOf="parent"

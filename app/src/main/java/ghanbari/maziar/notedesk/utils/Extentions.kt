@@ -1,10 +1,7 @@
 package ghanbari.maziar.notedesk.utils
 
 import android.app.Activity
-import android.app.NotificationChannel
-import android.app.NotificationManager
 import android.content.Context
-import android.os.Build
 import android.util.Log
 import android.view.Gravity
 import android.view.View
@@ -14,8 +11,6 @@ import android.widget.FrameLayout
 import android.widget.Spinner
 import android.widget.TextView
 import androidx.appcompat.app.AlertDialog
-import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.LayoutManager
@@ -206,7 +201,13 @@ fun Spinner.setUpIconSpinner(icons: MutableList<Int>, callback: (Int) -> Unit) {
 }
 
 //snackBar
-fun Activity.snackBar(colorBackground: Int, message: String, view: View? = null) {
+fun Activity.snackBar(
+    colorBackground: Int,
+    message: String,
+    view: View? = null,
+    /*btn open for open somewhere*/
+    btnOpen: (() -> Unit)? = null
+) {
 
     //this.findViewById(android.R.id.content)
     //show default view but in bottomSheet or dialog use their view
@@ -239,6 +240,16 @@ fun Activity.snackBar(colorBackground: Int, message: String, view: View? = null)
     textView.compoundDrawablePadding =
         resources.getDimensionPixelOffset(`in`.nouri.dynamicsizeslib.R.dimen._3mdp)
 
+    //check for btn
+    btnOpen?.let { btn ->
+        //set color
+        val color = ContextCompat.getColor(this, R.color.teal_200)
+        mySnack.setActionTextColor(color)
+        //set action
+        mySnack.setAction("باز کردن"){
+            btn()
+        }
+    }
 
     mySnack.show()
 }
@@ -252,34 +263,6 @@ fun Activity.alertDialog(title: String, message: String, yes: (() -> Unit)) {
             yes()
         }.setNegativeButton("خیر") { _, _ ->
         }.create().show()
-}
-
-//create notification
-fun Activity.notificationCreation(title: String, des: String, img: Int, notificationId: Int) {
-    val builder = NotificationCompat.Builder(this, CHANNEL_ID)
-        .setSmallIcon(img)
-        .setContentTitle(title)
-        .setContentText(des)
-        .setPriority(NotificationCompat.PRIORITY_DEFAULT)
-
-    // Create the NotificationChannel, but only on API 26+ because
-    // the NotificationChannel class is new and not in the support library
-    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-        val name = getString(R.string.channel_name)
-        val descriptionText = getString(R.string.channel_description)
-        val importance = NotificationManager.IMPORTANCE_DEFAULT
-        val channel = NotificationChannel(CHANNEL_ID, name, importance).apply {
-            description = descriptionText
-        }
-        // Register the channel with the system
-        val notificationManager: NotificationManager =
-            getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-        notificationManager.createNotificationChannel(channel)
-    }
-    with(NotificationManagerCompat.from(this)) {
-        // notificationId is a unique int for each notification that you must define
-        notify(notificationId, builder.build())
-    }
 }
 
 //english number to iranian number
@@ -310,11 +293,12 @@ fun String.englishToIranianNumber(): String {
 fun String.convertByPolicyNoteDeskFileNaming(): String {
     val c = this.toCharArray().toMutableList()
     for (i in 0 until c.size) {
-        c[i] = if (c[i] in ('a'..'z') || c[i] in ('A'..'A') || c[i] in ('ا'..'ی') || c[i] in ('0'..'9')) {
-            c[i]
-        } else {
-            '\u200C'
-        }
+        c[i] =
+            if (c[i] in ('a'..'z') || c[i] in ('A'..'A') || c[i] in ('ا'..'ی') || c[i] in ('0'..'9')) {
+                c[i]
+            } else {
+                '\u200C'
+            }
     }
     var result = ""
     c.forEach {
