@@ -20,6 +20,7 @@ import ghanbari.maziar.notedesk.databinding.FragmentMainBinding
 import ghanbari.maziar.notedesk.ui.MainActivity
 import ghanbari.maziar.notedesk.ui.main.adapters.FolderAdapter
 import ghanbari.maziar.notedesk.ui.main.adapters.NoteAdapter
+import ghanbari.maziar.notedesk.ui.main.adapters.setUpPriorityIconWithAdapter
 import ghanbari.maziar.notedesk.ui.main.pages.addEditFolder.AddEditFolderFragment
 import ghanbari.maziar.notedesk.ui.main.pages.addEditNote.AddEditNoteFragment
 import ghanbari.maziar.notedesk.ui.main.pages.noteContentShow.NoteContentFragment

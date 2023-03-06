@@ -1,4 +1,4 @@
-package ghanbari.maziar.notedesk.utils
+package ghanbari.maziar.notedesk.ui.main.adapters
 
 import android.annotation.SuppressLint
 import android.content.Context
@@ -9,6 +9,7 @@ import android.widget.BaseAdapter
 import androidx.core.content.ContextCompat
 import ghanbari.maziar.notedesk.data.model.FolderEntity
 import ghanbari.maziar.notedesk.databinding.*
+import ghanbari.maziar.notedesk.utils.PriorityNote
 
 object SpinnerAdapters {
     //selection priority for filtering on notes

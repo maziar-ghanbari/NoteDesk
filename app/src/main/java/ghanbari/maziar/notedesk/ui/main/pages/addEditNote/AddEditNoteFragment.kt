@@ -14,6 +14,8 @@ import ghanbari.maziar.notedesk.R
 import ghanbari.maziar.notedesk.data.model.FolderEntity
 import ghanbari.maziar.notedesk.data.model.NoteEntity
 import ghanbari.maziar.notedesk.databinding.FragmentAddEditNoteBinding
+import ghanbari.maziar.notedesk.ui.main.adapters.setUpFolderItemsWithAdapter
+import ghanbari.maziar.notedesk.ui.main.adapters.setUpPriorityIconWithAdapter
 import ghanbari.maziar.notedesk.utils.*
 import ghanbari.maziar.notedesk.viewModel.AddEditNoteViewModel
 import kotlinx.coroutines.Dispatchers.IO

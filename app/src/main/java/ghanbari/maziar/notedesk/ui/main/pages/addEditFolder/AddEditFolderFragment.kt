@@ -10,6 +10,7 @@ import dagger.hilt.android.AndroidEntryPoint
 import ghanbari.maziar.notedesk.R
 import ghanbari.maziar.notedesk.data.model.FolderEntity
 import ghanbari.maziar.notedesk.databinding.FragmentAddEditFolderBinding
+import ghanbari.maziar.notedesk.ui.main.adapters.setUpIconSpinner
 import ghanbari.maziar.notedesk.utils.*
 import ghanbari.maziar.notedesk.viewModel.AddEditFolderViewModel
 

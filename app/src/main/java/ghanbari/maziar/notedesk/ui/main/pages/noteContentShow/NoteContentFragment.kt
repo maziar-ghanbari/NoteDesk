@@ -87,7 +87,7 @@ class NoteContentFragment : BottomSheetDialogFragment() {
         }
     }
 
-    //this fun called when note collected successfuly
+    //this fun called when note collected successfully
     private fun setNoteDataToView(noteAndFolder: NoteAndFolder) {
         binding?.apply {
             noteAndFolder.note.also {

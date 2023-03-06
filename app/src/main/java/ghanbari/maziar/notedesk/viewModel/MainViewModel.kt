@@ -9,6 +9,7 @@ import ghanbari.maziar.notedesk.data.model.FolderEntity
 import ghanbari.maziar.notedesk.data.model.NoteAndFolder
 import ghanbari.maziar.notedesk.data.model.NoteEntity
 import ghanbari.maziar.notedesk.data.repository.MainRepository
+import ghanbari.maziar.notedesk.ui.main.*
 import ghanbari.maziar.notedesk.utils.*
 import kotlinx.coroutines.Dispatchers.IO
 import kotlinx.coroutines.flow.MutableStateFlow
